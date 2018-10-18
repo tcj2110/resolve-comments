@@ -15,6 +15,10 @@ your requirements.txt using
 
 To make your life easier, consider using Pycharm Pro which can be obtained using your columbia student email. 
 It will automatically detect you are using virtual env and handle a lot of things for you. 
+
+To ensure all pre-commit hooks are enforced run this from the project root directory.
+        `precommit install`
+
 ## Coding style and code standards
 
 The project will use PEP8 python coding standards. If you guys find any additional linting needed or unnecessary we shall
