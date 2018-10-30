@@ -22,7 +22,7 @@ before_install:
       fi
     - pip install -U pip
     - export PYTHONPATH=$PYTHONPATH:$(pwd)
-    - python setup.py install
+    - python3 setup.py install
 
 install:
     # bootstrap the testing environment
