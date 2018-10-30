@@ -1,5 +1,5 @@
 import unittest
-import mock
+import unittest.mock as mock
 from utils.authenticate import Authenticate
 
 
