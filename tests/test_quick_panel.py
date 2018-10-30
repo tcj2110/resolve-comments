@@ -29,7 +29,6 @@ class TestQuickPanel(TestCase):
                          ['console',
                           'find',
                           'find_in_files',
-                          'output.UnitTesting',
                           'output.find_results',
                           'replace'])
 
