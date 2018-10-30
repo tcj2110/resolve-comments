@@ -1,6 +1,6 @@
 import unittest
 import unittest.mock as mock
-from ...utils.authenticate import Authenticate
+from utils.authenticate import Authenticate
 
 
 TOKEN = 'afd53032060c50872c19e884c35e4ae00c046f73'
