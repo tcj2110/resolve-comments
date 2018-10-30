@@ -21,7 +21,7 @@ before_install:
             sh -e /etc/init.d/xvfb start;
       fi
     - pip install -U pip
-    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)/utils
 
 install:
     # bootstrap the testing environment
