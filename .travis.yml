@@ -1,6 +1,6 @@
 languange: python
 python:
-  - "3.7-dev"
+  - "3.6"
 env:
   _SUBLIME_TEXT_VERSION ="3"
 install:
