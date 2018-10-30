@@ -12,9 +12,6 @@ matrix:
         - os: linux
           language: python
           python: 3.6
-        - os: osx
-          language: generic
-
 
 before_install:
     - curl -OL https://raw.githubusercontent.com/SublimeText/UnitTesting/master/sbin/travis.sh
@@ -33,7 +30,7 @@ install:
 
 script:
     # run tests with test coverage report
-    echo "hello"
+    - sh travis.sh run_tests
     # testing syntax_test files
     # - sh travis.sh run_syntax_tests
 
