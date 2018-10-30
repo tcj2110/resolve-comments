@@ -1,5 +1,5 @@
 import requests
-import utils.constants as git_constants
+from utils import constants as git_constants
 
 
 class Authenticate:
