@@ -10,7 +10,7 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
             # If cancel is pressed return -1
 
         if index == -1:
-            return
+            return -1
 
         self.view.run_command("insert_my_text",
                               {"args": {'text': self.data[index]}})
@@ -19,6 +19,7 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
         # Populating panel with names of group members
         self.data = ["Arsalaan", "Raphael", "Kevin", "Trevor"]
         self.view.window().show_quick_panel(self.data, self.on_click, 1, 2)
+        return self.data
 
 
 class InsertText(sublime_plugin.TextCommand):
