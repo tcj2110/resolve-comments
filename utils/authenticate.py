@@ -1,5 +1,5 @@
 import requests
-from ..utils import constants as git_constants
+from utils import constants as git_constants
 
 
 class Authenticate:
@@ -11,6 +11,6 @@ class Authenticate:
     def get_profile(self):
         response = requests.get(git_constants.GITHUB_USER_URL,
                                 auth=(self.username, self.token))
-        self.profile = response
+        self.profile = response.json()
         print(self.profile)
 
