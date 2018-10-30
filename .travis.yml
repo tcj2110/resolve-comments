@@ -9,7 +9,7 @@ install:
   - sudo apt-get update
   - sudo apt-get install sublime-text-installer -y
   - subl --version
-  - pip install -r requirements.txt
+  - python3 -m pip install -r requirements.txt
   - python setup.py -develop
   - mkdir -p '~/.config/sublime-text-'$SUBLIME_TEXT_VERSION'/Packages/'
   - ln -s $PWD '~/.config/sublime-text-'$SUBLIME_TEXT_VERSION'/Packages/RESOLVE_COMMENTS'
