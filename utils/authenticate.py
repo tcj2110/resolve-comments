@@ -47,10 +47,14 @@ class Authenticate:
         implemented = False
 
     def get_pr_comments(self, owner, repo, pr_id):
-
-        implemented = False
-        url = 'https://api.github.com/repos/:owner/:repo/pulls/:number/reviews'
-        #returns a list of comments
+        url = git_constants.GITHUB_REPO + ("%s/%s/pulls/%s/comments" % (owner, repo, pr_id))
+        params = {
+            "sort": "created",
+            "direction": "desc"
+        }
+        print(url)
+        response = requests.get(url, auth=(self.username, self.token), params=params)
+        return response.json()
 
     def get_repo_issues(self, owner, repo):
         implemented = False

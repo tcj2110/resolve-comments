@@ -6,9 +6,324 @@ TOKEN = 'afd53032060c50872c19e884c35e4ae00c046f73'
 USER = 'raphaeljunior'
 
 
-class FakeRepoResponse:
+class FakeCommentResponse:
     def __call__(self, *args, **kwargs):
         return self
+
+    def json(self):
+        return [
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104651064",
+                "pull_request_review_id": 25495549,
+                "id": 104651064,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDY1MTA2NA==",
+                "diff_hunk": "@@ -0,0 +1,19 @@\n+from sqlalchemy import create_engine\n+from sqlalchemy.orm import sessionmaker\n+from Models.Reviews import Review\n+URI = \"postgres://xeeqkeipvcflil:fead0f891152e8f657d7ee59ba256aa36c24fed629a0ee765b6a6aac6da2610f@ec2-54-225-236-102.compute-1.amazonaws.com:5432/d7mipabothqsm0\"",
+                "path": "templates/home.py",
+                "position": 4,
+                "original_position": 4,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "alanhdu",
+                    "id": 1914111,
+                    "node_id": "MDQ6VXNlcjE5MTQxMTE=",
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/1914111?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/alanhdu",
+                    "html_url": "https://github.com/alanhdu",
+                    "followers_url": "https://api.github.com/users/alanhdu/followers",
+                    "following_url": "https://api.github.com/users/alanhdu/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/alanhdu/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/alanhdu/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/alanhdu/subscriptions",
+                    "organizations_url": "https://api.github.com/users/alanhdu/orgs",
+                    "repos_url": "https://api.github.com/users/alanhdu/repos",
+                    "events_url": "https://api.github.com/users/alanhdu/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/alanhdu/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "Traditionally, we stored it in a config file that was `.gitignore`d and that we manually passed distributed around (although this is admittedly a bit of a PITA). The other way to do it is to have a `dev` environment where Postgres lives on the local machine (somewhere on `localhost`) and worry about a `prod` environment later.\r\n\r\nThere are lots of different ways to tackle this problem -- you should ask your mentor about what they think is best.",
+                "created_at": "2017-03-07T12:03:46Z",
+                "updated_at": "2017-03-07T12:03:47Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104651064",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "NONE",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104651064"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104651064"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287330
+            },
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104650803",
+                "pull_request_review_id": 25495255,
+                "id": 104650803,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDY1MDgwMw==",
+                "diff_hunk": "@@ -0,0 +1,16 @@\n+from sqlalchemy.ext.declarative import declarative_base\n+from  sqlalchemy import Column, Integer, String\n+\n+\n+Base = declarative_base()\n+\n+\n+class course(Base):\n+    __tablename__ = 'courses'\n+    department_ids = Column(String)\n+    name = Column(String)\n+    id = Column(Integer)\n+    number = Column(Integer)\n+\n+    def __repr__(self):\n+        return str(self.name)",
+                "path": "Models/Courses.py",
+                "position": 16,
+                "original_position": 16,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "alanhdu",
+                    "id": 1914111,
+                    "node_id": "MDQ6VXNlcjE5MTQxMTE=",
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/1914111?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/alanhdu",
+                    "html_url": "https://github.com/alanhdu",
+                    "followers_url": "https://api.github.com/users/alanhdu/followers",
+                    "following_url": "https://api.github.com/users/alanhdu/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/alanhdu/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/alanhdu/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/alanhdu/subscriptions",
+                    "organizations_url": "https://api.github.com/users/alanhdu/orgs",
+                    "repos_url": "https://api.github.com/users/alanhdu/repos",
+                    "events_url": "https://api.github.com/users/alanhdu/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/alanhdu/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "If you're looking for a unique hash, I'd just implement `__hash__` instead. IMO, `__repr__` is most used for debugging and logging (which is the difference between `__repr__` and `__str__` -- `__str__` is end-user facing, while `__repr__` is usually programmer / machine facing).",
+                "created_at": "2017-03-07T12:01:53Z",
+                "updated_at": "2017-03-07T12:01:54Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104650803",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "NONE",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104650803"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104650803"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287304
+            },
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104650521",
+                "pull_request_review_id": 25494974,
+                "id": 104650521,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDY1MDUyMQ==",
+                "diff_hunk": "@@ -0,0 +1,16 @@\n+from sqlalchemy.ext.declarative import declarative_base\n+from  sqlalchemy import Column, Integer, String\n+\n+\n+Base = declarative_base()\n+\n+\n+class course(Base):\n+    __tablename__ = 'courses'\n+    department_ids = Column(String)",
+                "path": "Models/Courses.py",
+                "position": 10,
+                "original_position": 10,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "alanhdu",
+                    "id": 1914111,
+                    "node_id": "MDQ6VXNlcjE5MTQxMTE=",
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/1914111?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/alanhdu",
+                    "html_url": "https://github.com/alanhdu",
+                    "followers_url": "https://api.github.com/users/alanhdu/followers",
+                    "following_url": "https://api.github.com/users/alanhdu/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/alanhdu/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/alanhdu/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/alanhdu/subscriptions",
+                    "organizations_url": "https://api.github.com/users/alanhdu/orgs",
+                    "repos_url": "https://api.github.com/users/alanhdu/repos",
+                    "events_url": "https://api.github.com/users/alanhdu/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/alanhdu/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "Well, depends on the database. Postgres supports arrays natively and so does SQLAlchemy (http://docs.sqlalchemy.org/en/latest/core/type_basics.html#sqlalchemy.types.ARRAY)",
+                "created_at": "2017-03-07T12:00:08Z",
+                "updated_at": "2017-03-07T12:00:09Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104650521",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "NONE",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104650521"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104650521"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287306
+            },
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296820",
+                "pull_request_review_id": 25132155,
+                "id": 104296820,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDI5NjgyMA==",
+                "diff_hunk": "@@ -0,0 +1,19 @@\n+from sqlalchemy import create_engine\n+from sqlalchemy.orm import sessionmaker\n+from Models.Reviews import Review\n+URI = \"postgres://xeeqkeipvcflil:fead0f891152e8f657d7ee59ba256aa36c24fed629a0ee765b6a6aac6da2610f@ec2-54-225-236-102.compute-1.amazonaws.com:5432/d7mipabothqsm0\"\n+engine = create_engine(URI)\n+engine.connect()\n+Session = sessionmaker(bind=engine)\n+session = Session()",
+                "path": "templates/home.py",
+                "position": 8,
+                "original_position": 8,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "Raphaeljunior",
+                    "id": 6213945,
+                    "node_id": "MDQ6VXNlcjYyMTM5NDU=",
+                    "avatar_url": "https://avatars0.githubusercontent.com/u/6213945?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/Raphaeljunior",
+                    "html_url": "https://github.com/Raphaeljunior",
+                    "followers_url": "https://api.github.com/users/Raphaeljunior/followers",
+                    "following_url": "https://api.github.com/users/Raphaeljunior/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/Raphaeljunior/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/Raphaeljunior/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/Raphaeljunior/subscriptions",
+                    "organizations_url": "https://api.github.com/users/Raphaeljunior/orgs",
+                    "repos_url": "https://api.github.com/users/Raphaeljunior/repos",
+                    "events_url": "https://api.github.com/users/Raphaeljunior/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/Raphaeljunior/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "Will do. Still figuring out flask. Thanks ",
+                "created_at": "2017-03-04T20:49:54Z",
+                "updated_at": "2017-03-04T20:49:54Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296820",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "COLLABORATOR",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296820"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296820"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287326
+            },
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296815",
+                "pull_request_review_id": 25132147,
+                "id": 104296815,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDI5NjgxNQ==",
+                "diff_hunk": "@@ -0,0 +1,19 @@\n+from sqlalchemy import create_engine\n+from sqlalchemy.orm import sessionmaker\n+from Models.Reviews import Review\n+URI = \"postgres://xeeqkeipvcflil:fead0f891152e8f657d7ee59ba256aa36c24fed629a0ee765b6a6aac6da2610f@ec2-54-225-236-102.compute-1.amazonaws.com:5432/d7mipabothqsm0\"",
+                "path": "templates/home.py",
+                "position": 4,
+                "original_position": 4,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "Raphaeljunior",
+                    "id": 6213945,
+                    "node_id": "MDQ6VXNlcjYyMTM5NDU=",
+                    "avatar_url": "https://avatars0.githubusercontent.com/u/6213945?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/Raphaeljunior",
+                    "html_url": "https://github.com/Raphaeljunior",
+                    "followers_url": "https://api.github.com/users/Raphaeljunior/followers",
+                    "following_url": "https://api.github.com/users/Raphaeljunior/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/Raphaeljunior/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/Raphaeljunior/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/Raphaeljunior/subscriptions",
+                    "organizations_url": "https://api.github.com/users/Raphaeljunior/orgs",
+                    "repos_url": "https://api.github.com/users/Raphaeljunior/repos",
+                    "events_url": "https://api.github.com/users/Raphaeljunior/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/Raphaeljunior/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "Rookie move. How should I store the URI for database connections?",
+                "created_at": "2017-03-04T20:49:30Z",
+                "updated_at": "2017-03-04T20:49:30Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296815",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "COLLABORATOR",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296815"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296815"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287330
+            },
+            {
+                "url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296801",
+                "pull_request_review_id": 25132130,
+                "id": 104296801,
+                "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEwNDI5NjgwMQ==",
+                "diff_hunk": "@@ -0,0 +1,15 @@\n+from sqlalchemy.ext.declarative import declarative_base\n+from sqlalchemy import Column, String, Integer\n+\n+Base = declarative_base()\n+\n+class professor(Base):\n+    __tablename__ = 'professors'\n+    nugget = Column(String)\n+    first_name = Column(String)\n+    middle_name = Column(String)\n+    last_name = Column(String)",
+                "path": "Models/Professors.py",
+                "position": 11,
+                "original_position": 11,
+                "commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "original_commit_id": "2f105655c58c3883814c214eb3b579f4695feda0",
+                "user": {
+                    "login": "Raphaeljunior",
+                    "id": 6213945,
+                    "node_id": "MDQ6VXNlcjYyMTM5NDU=",
+                    "avatar_url": "https://avatars0.githubusercontent.com/u/6213945?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/Raphaeljunior",
+                    "html_url": "https://github.com/Raphaeljunior",
+                    "followers_url": "https://api.github.com/users/Raphaeljunior/followers",
+                    "following_url": "https://api.github.com/users/Raphaeljunior/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/Raphaeljunior/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/Raphaeljunior/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/Raphaeljunior/subscriptions",
+                    "organizations_url": "https://api.github.com/users/Raphaeljunior/orgs",
+                    "repos_url": "https://api.github.com/users/Raphaeljunior/repos",
+                    "events_url": "https://api.github.com/users/Raphaeljunior/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/Raphaeljunior/received_events",
+                    "type": "User",
+                    "site_admin": False
+                },
+                "body": "Thanks. Nice read. ",
+                "created_at": "2017-03-04T20:48:30Z",
+                "updated_at": "2017-03-04T20:48:30Z",
+                "html_url": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296801",
+                "pull_request_url": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2",
+                "author_association": "COLLABORATOR",
+                "_links": {
+                    "self": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/comments/104296801"
+                    },
+                    "html": {
+                        "href": "https://github.com/ADI-Labs/culpa2/pull/2#discussion_r104296801"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/ADI-Labs/culpa2/pulls/2"
+                    }
+                },
+                "in_reply_to_id": 104287345
+            },
+        ]
+
+
+
+
+
+class FakeRepoResponse:
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+
 
     def json(self):
         return [{
@@ -783,7 +1098,6 @@ class FakePRResponse:
             }
         ]
 
-
 def mocked_requests_get(*args, **kwargs):
     return FakeResponse()
 
@@ -794,6 +1108,10 @@ def mocked_repo_response(*args, **kwargs):
 
 def mocked_pr_response(*args, **kwargs):
     return FakePRResponse()
+
+
+def mocked_comment_response(*args, **kwargs):
+    return FakeCommentResponse()
 
 
 class TestAuthenticate(unittest.TestCase):
@@ -815,3 +1133,8 @@ class TestAuthenticate(unittest.TestCase):
     def test_get_pr(self):
         pull_requests = self.authenticate.get_pull_requests('ADI-Labs', 'culpa2')
         self.assertListEqual(pull_requests, mocked_pr_response().json())
+
+    @mock.patch('requests.get', mocked_comment_response())
+    def test_get_pr_comments(self):
+        pr_comments =  self.authenticate.get_pr_comments('ADI-Labs', 'culpa2', 2)
+        self.assertListEqual(pr_comments, mocked_comment_response().json())
