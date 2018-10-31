@@ -2,7 +2,7 @@ import unittest
 import unittest.mock as mock
 from utils.authenticate import Authenticate
 
-TOKEN = 'Nanosoft1*'
+TOKEN = 'afd53032060c50872c19e884c35e4ae00c046f73'
 USER = 'raphaeljunior'
 
 
