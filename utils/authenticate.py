@@ -10,12 +10,12 @@ class Plugin:
             access_token = open("auth.txt")
         else:
             print("Visit this link to generate your access token: ")
-            print("Be sure to enable all repo scopes")
+            print("Be sure to enable all desired scopes")
             print("https://github.com/settings/tokens/new")
-            access_token = raw_input('Paste the access token you received:')
+            access_token = raw_input("Paste the access token you received: ")
 
             file = open("auth.txt", "w+")
-	    file.write(access_token)
+            file.write(access_token)
             file.close()
 
         self.github = Github(access_token)
