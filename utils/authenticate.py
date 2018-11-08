@@ -55,7 +55,7 @@ class Authenticate:
         """
 
     def get_pr_comments(self, owner, repo, pr_id):
-<<<<<<< HEAD
+<<<<<< HEAD
 
         implemented = False
         url = 'https://api.github.com/repos/:owner/:repo/pulls/:number/reviews'
@@ -76,5 +76,6 @@ class Authenticate:
     def get_repo_issues(self, owner, repo):
         implemented = False
         url = ' https://api.github.com/repos/:owner/:repo/issues'
+
 
 
