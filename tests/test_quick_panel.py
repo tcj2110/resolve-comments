@@ -33,4 +33,4 @@ class TestQuickPanel(TestCase):
                           'replace'])
 
 
-testpanel = sys.modules["User.base"]
+testpanel = sys.modules["git_comments.main"]
