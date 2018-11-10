@@ -11,24 +11,6 @@ TOKEN = 'Nanosoft1*'
 USER = 'raphaeljunior'
 
 
-# Placeholder method for fetching comment data
-# Will be replaced with Github API comment data
-# Returns data in list format
-def load_quick_panel_data(token, user):
-    auth = authenticate.Authenticate(token, user)
-    # auth.load_repos()
-    # repos = auth.repos
-    # print(repos)
-    data = []
-    pull_requests = auth.get_pull_requests('ADI-Labs', 'culpa2')
-    for req in pull_requests:
-        title = req['title']
-        body = req['body']
-        content = [title, body]
-        data.append(content)
-    return data
-
-
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
     # Sets cursor location for comments side panel
@@ -82,3 +64,22 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         self.gen_comment_list()
+
+# Placeholder method for fetching comment data
+# Will be replaced with Github API comment data
+# Returns data in list format
+
+
+def load_quick_panel_data(token, user):
+    auth = authenticate.Authenticate(token, user)
+    # auth.load_repos()
+    # repos = auth.repos
+    # print(repos)
+    data = []
+    pull_requests = auth.get_pull_requests('ADI-Labs', 'culpa2')
+    for req in pull_requests:
+        title = req['title']
+        body = req['body']
+        content = [title, body]
+        data.append(content)
+    return data
