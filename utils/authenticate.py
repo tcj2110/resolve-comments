@@ -1,5 +1,5 @@
-from utils import constants as git_constants
 import requests
+from utils import constants as git_constants
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

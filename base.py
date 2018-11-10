@@ -1,5 +1,5 @@
 
-from .utils import authenticate
+# from .utils import authenticate
 import sublime_plugin
 import sublime
 import sys
@@ -36,12 +36,12 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Will be replaced with Github API comment data
     # Returns data in list format
     def load_comment_data(self):
-        auth = authenticate.Authenticate(TOKEN, USER)
-        auth.load_repos()
-        repos = auth.repos
-        print(repos)
-        pr_comments = auth.get_pr_comments('ADI-Labs', 'culpa2', 2)
-        print(pr_comments)
+        # auth = authenticate.Authenticate(TOKEN, USER)
+        # auth.load_repos()
+        # repos = auth.repos
+        # print(repos)
+        # pr_comments = auth.get_pr_comments('ADI-Labs', 'culpa2', 2)
+        # print(pr_comments)
         data = [["Arsalaan", "wow"]] * 4
         return data
 
