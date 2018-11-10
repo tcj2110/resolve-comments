@@ -1,11 +1,10 @@
 
-from .utils import authenticate
 import sublime_plugin
 import sublime
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
+from utils import authenticate  # noqa: E402
 
 TOKEN = 'Nanosoft1*'
 USER = 'raphaeljunior'
