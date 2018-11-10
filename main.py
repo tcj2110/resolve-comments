@@ -6,6 +6,9 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+TOKEN = 'Nanosoft1*'
+USER = 'raphaeljunior'
+
 
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
@@ -33,8 +36,12 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Will be replaced with Github API comment data
     # Returns data in list format
     def load_comment_data(self):
-        auth = authenticate.Authenticate("Placeholder", "Placeholder")
-        print(auth.token)
+        auth = authenticate.Authenticate(TOKEN, USER)
+        auth.load_repos()
+        repos = auth.repos
+        print(repos)
+        pr_comments = auth.get_pr_comments('ADI-Labs', 'culpa2', 2)
+        print(pr_comments)
         data = [["Arsalaan", "wow"]] * 4
         return data
 
