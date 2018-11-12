@@ -55,21 +55,19 @@ class Authenticate:
         """
 
     def get_pr_comments(self, owner, repo, pr_id):
-<<<<<< HEAD
 
         implemented = False
         url = 'https://api.github.com/repos/:owner/:repo/pulls/:number/reviews'
         #returns a list of comments
         url = "https://api.github.com/repos/:" + str(owner)+  "/:" +str(repo)
         url+=  "/pulls/:"+str(pr_id)+"/reviews"
-=======
+
         url = git_constants.GITHUB_REPO + ("%s/%s/pulls/%s/comments" % (owner, repo, pr_id))
         params = {
             "sort": "created",
             "direction": "desc"
         }
         print(url)
->>>>>>> c9a694db5a9fb87b0c346f5fb00e7fa4ae3a8a10
         response = requests.get(url, auth=(self.username, self.token), params=params)
         return response.json()
 
@@ -77,5 +75,16 @@ class Authenticate:
         implemented = False
         url = ' https://api.github.com/repos/:owner/:repo/issues'
 
+    """Given a review comment, comment, review number, 
+    thread ID, update the GitHub API with new comments. """
+    def post_pr_comments(self, owner ,r_comment,comment , rev_num, th_ID , repo ):
+        url = "https://api.github.com/repos/:owner/:repo/pulls/:number/comments"
+        url = git_constants.GITHUB_REPO + ("%s/%s/pulls/%s/comments" % (owner, repo, pr_id))
+        gh = requests.get(url, auth=(self.username, self.token), params=params)
+        rrepo = gh.repository(owner, repo)
+        pr = repo.create_pull(r_comment, rev_num, th_ID, comment)
+        issue = repo.issue(pr.number)
+        issue.create_comment(comment)
+        ##needs further testing
 
 
