@@ -55,8 +55,6 @@ class Authenticate:
         return response.json()
 
     def get_pr_reviews(self, owner, repo, pr_id):
-        # returns a list of reviews underneath a PR
-        params = {}
         url = 'https://api.github.com/repos/:owner/:repo/pulls/:number/reviews'
         # list = []
         url = "https://api.github.com/repos/:" + str(owner) + "/:" + str(repo)
@@ -68,14 +66,8 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
-        """
-        ##for later in the semester, this function will return a list
-        implemented = False
-        return list
-        """
 
     def get_pr_comments(self, owner, repo, pr_id):
-
         url = git_constants.GITHUB_REPO + \
             ("%s/%s/pulls/%s/comments" % (owner, repo, pr_id))
         params = {
