@@ -6,11 +6,11 @@ Resolve-Comments is a Sublime text 3 plugin that allows users to view their Gith
 
 To initialize this Sublime Text 3 Plugin on Linux or Mac machines simply clone the repository in the following directory:
 
-        `~/.config/sublime-text-3/Packages/
+        ~/.config/sublime-text-3/Packages/
 
 The plugin must be run in the Sublime Text 3 interface within a folder that has an initialized git repository. To run the plugin simply click the view tab in the Sublime text interface and click the Show Console option. If done correctly there should be a console on the bottom of the screen. Starting the plugin requires running the following command in the console:
 
-        `view.run_command("insert_panel")`
+        view.run_command("insert_panel")
  
 `
 # Environment
