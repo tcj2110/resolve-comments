@@ -1,6 +1,6 @@
 
 import sublime_plugin
-import sublime
+# import sublime
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -12,25 +12,17 @@ USER = 'raphaeljunior'
 
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
-    # Sets cursor location for comments side panel
-    # to be positioned correctly
-    # Returns: Original cursor location
-    def set_cursor(self):
-        selections = self.view.sel()
-        try:
-            cursor = selections[0]
-            self.view.sel().clear()
-            # self.view.show_at_center(sublime.Region(0,0))
-            self.view.sel().add(sublime.Region(0, 0))
-            return cursor
-        except IndexError:
-            return (0, 0)
+    # Method opens up input window and prompts user for token and username
 
-    # Resets cursor to users original position
+    def user_token_input(self):
+        self.view.window().show_input_panel(
+            caption="Credential Prompt",
+            initial_text="Username:",
+            on_done=None,
+            on_change=None,
+            on_cancel=None)
 
-    def reset_cursor(self, cursor):
-        print(cursor)
-        self.view.sel().add(sublime.Region(cursor))
+        return TOKEN, USER
 
     # Generates simple list HTML for comment data
     # Returns: HTML
@@ -56,12 +48,13 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     #  comments in side popup
 
     def gen_comment_list(self):
-        data = load_quick_panel_data(TOKEN, USER)
+        data = load_quick_panel_data(self.token, self.user)
         self.view.window().show_quick_panel(data, self.on_click, 1, 2)
 
     # Entrypoint for plugin
 
     def run(self, edit):
+        self.token, self.user = self.user_token_input()
         self.gen_comment_list()
 
 # Placeholder method for fetching comment data
@@ -75,7 +68,7 @@ def load_quick_panel_data(token, user):
     # repos = auth.repos
     # print(repos)
     data = []
-    pull_requests = auth.get_pull_requests('ADI-Labs', 'culpa2')
+    pull_requests = auth.get_pull_requests('Raphaeljunior', 'resolve-comments')
     for req in pull_requests:
         title = req['title']
         body = req['body']
