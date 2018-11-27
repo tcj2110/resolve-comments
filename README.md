@@ -8,7 +8,7 @@ To initialize this Sublime Text 3 Plugin on Linux  machines simply clone the rep
 
         ~/.config/sublime-text-3/Packages/
 
-For Mac machines
+For Mac machines:
         /Users/{user}/Library/Application Support/Sublime Text 2/Packages
 
 The plugin must be run in the Sublime Text 3 interface within a folder that has an initialized git repository. To run the plugin simply click the view tab in the Sublime text interface and click the Show Console option. If done correctly there should be a console on the bottom of the screen. Starting the plugin requires running the following command in the console:
