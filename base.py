@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import authenticate  # noqa: E402
 
 TOKEN = 'Nanosoft1*'
-USER = 'raphaeljunior'
+USER = 'Raphaeljunior'
 
 # Class provides the entrypoint for the plugin.
 # All helper functions are external to
@@ -88,7 +88,8 @@ def token_input(user):
 
 
 def gen_comment_list(token, user):
-    data = load_quick_panel_data(token, user)
+    data = load_quick_panel_data(
+        token, user, 'Raphaeljunior', 'resolve-comments')
     sublime.active_window().show_quick_panel(data, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -98,22 +99,23 @@ def on_click(index):
     if(index == -1):
         return -1
 
-# Method loads Github pull_requests data by authenticating the user,
-# retrieving
+
+# Method loads Github pull_requests data by authenticating the user and token.
+# After authentication plugin retrieves pull request data based on org name
+# and repo name.
 
 
-def load_quick_panel_data(token, user):
+def load_quick_panel_data(token, user, org, repo):
+
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return []
     auth = authenticate.Authenticate(token, user)
     data = []
-    pull_requests = auth.get_pull_requests('Raphaeljunior', 'resolve-comments')
+    pull_requests = auth.get_pull_requests(org, repo)
     if('message' in pull_requests and
             pull_requests['message'] == 'Bad credentials'):
-        sublime.active_window().show_input_panel(
-            caption="Error Prompt",
-            initial_text="Error: Token or Username is Incorrect",
-            on_done=None,
-            on_change=None,
-            on_cancel=None)
+        error_message("Error: Username or Token Invalid")
         return []
     for req in pull_requests:
         title = req['title']
@@ -122,3 +124,12 @@ def load_quick_panel_data(token, user):
         content = [title, body, user]
         data.append(content)
     return data
+
+
+def error_message(e_mes):
+    sublime.active_window().show_input_panel(
+        caption="Error Prompt",
+        initial_text=e_mes,
+        on_done=None,
+        on_change=None,
+        on_cancel=None)

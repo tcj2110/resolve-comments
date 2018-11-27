@@ -1,5 +1,4 @@
 import sublime
-import sys
 from unittest import TestCase
 
 version = sublime.version()
@@ -28,21 +27,3 @@ class TestQuickPanel(TestCase):
                           'find_in_files',
                           'output.find_results',
                           'replace'])
-
-
-testpanel = sys.modules["git_comments.base"]
-
-# Tests whether populated panel data is accurate
-
-
-class TestPanelData(TestCase):
-    def mock_panel_list(self):
-        mock_panel_list = [
-            ['Set up db schema and created models', ''],
-            ['Setup database', '']]
-        return mock_panel_list
-
-    def test_panel_data_st3(self):
-        panel_data = testpanel.load_quick_panel_data(
-            'Nanosoft1*', 'raphaeljunior')
-        self.assertListEqual(panel_data, self.mock_panel_list())
