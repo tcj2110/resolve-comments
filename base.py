@@ -7,34 +7,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import authenticate  # noqa: E402
 
 TOKEN = 'Nanosoft1*'
-USER = 'raphaeljunior'
+USER = 'Raphaeljunior'
+
+# Class provides the entrypoint for the plugin.
+# All helper functions are external to
+# allow for easy unit testing.
 
 
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
-    # Sets cursor location for comments side panel
-    # to be positioned correctly
-    # Returns: Original cursor location
-    def set_cursor(self):
-        selections = self.view.sel()
-        try:
-            cursor = selections[0]
-            self.view.sel().clear()
-            # self.view.show_at_center(sublime.Region(0,0))
-            self.view.sel().add(sublime.Region(0, 0))
-            return cursor
-        except IndexError:
-            return (0, 0)
-
-    # Resets cursor to users original position
-
-    def reset_cursor(self, cursor):
-        print(cursor)
-        self.view.sel().add(sublime.Region(cursor))
-
     # Generates simple list HTML for comment data
-    # Returns: HTML
-
+    '''
     def gen_comment_html(self):
         data = self.load_comment_data()
         html_arr = [
@@ -47,38 +30,106 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
         html_arr.append("</ul>")
         html_str = "".join(html_arr)
         return html_str
-
-    def on_click(self, index):
-        if(index == -1):
-            return -1
-
-    #  Manager function that uses helper functions to show
-    #  comments in side popup
-
-    def gen_comment_list(self):
-        data = load_quick_panel_data(TOKEN, USER)
-        self.view.window().show_quick_panel(data, self.on_click, 1, 2)
+    '''
 
     # Entrypoint for plugin
 
     def run(self, edit):
-        self.gen_comment_list()
-
-# Placeholder method for fetching comment data
-# Will be replaced with Github API comment data
-# Returns data in list format
+        username_input()
 
 
-def load_quick_panel_data(token, user):
+# Method opens up input window and prompts username.
+# When user presses enter on_done function calls
+# token_input.
+
+def username_input():
+    def on_done(user_string):
+        user = user_string.strip()
+        token_input(user)
+
+    def on_change(user_string):
+        pass
+
+    def on_cancel(user_string):
+        print("User cancelled input")
+
+    sublime.active_window().show_input_panel(
+        caption="Username:",
+        initial_text="",
+        on_done=on_done,
+        on_change=on_change,
+        on_cancel=on_cancel)
+
+
+# Method opens up input window and prompts token.
+# When user presses enter on_done function calls
+# gen_comment_list.
+
+def token_input(user):
+    def on_done(token_string):
+        token = token_string.strip()
+        gen_comment_list(token, user)
+
+    def on_change(token_string):
+        pass
+
+    def on_cancel(token_string):
+        print("User cancelled input")
+
+    sublime.active_window().show_input_panel(
+        caption="Token:",
+        initial_text="",
+        on_done=on_done,
+        on_change=on_change,
+        on_cancel=on_cancel)
+
+#  Manager function that uses helper functions to show
+#  comments in side popup
+
+
+def gen_comment_list(token, user):
+    data = load_quick_panel_data(
+        token, user, 'Raphaeljunior', 'resolve-comments')
+    sublime.active_window().show_quick_panel(data, on_click, 1, 2)
+
+# Method that responds to clicking quickpanel item
+
+
+def on_click(index):
+    if(index == -1):
+        return -1
+
+
+# Method loads Github pull_requests data by authenticating the user and token.
+# After authentication plugin retrieves pull request data based on org name
+# and repo name.
+
+
+def load_quick_panel_data(token, user, org, repo):
+
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return []
     auth = authenticate.Authenticate(token, user)
-    # auth.load_repos()
-    # repos = auth.repos
-    # print(repos)
     data = []
-    pull_requests = auth.get_pull_requests('ADI-Labs', 'culpa2')
+    pull_requests = auth.get_pull_requests(org, repo)
+    if('message' in pull_requests and
+            pull_requests['message'] == 'Bad credentials'):
+        error_message("Error: Username or Token Invalid")
+        return []
     for req in pull_requests:
         title = req['title']
         body = req['body']
-        content = [title, body]
+        user = req['user']['login']
+        content = [title, body, user]
         data.append(content)
     return data
+
+
+def error_message(e_mes):
+    sublime.active_window().show_input_panel(
+        caption="Error Prompt",
+        initial_text=e_mes,
+        on_done=None,
+        on_change=None,
+        on_cancel=None)
