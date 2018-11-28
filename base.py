@@ -18,18 +18,7 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
 
     # Generates simple list HTML for comment data
     '''
-    def gen_comment_html(self):
-        data = self.load_comment_data()
-        html_arr = [
-            "<style> ul { height: 100px; display: flex; flex-direction \
-            : column; flex-wrap: wrap;} </style>",
-            "<ul>"]
-        for body in data:
-            li = "<li>" + body + "</li>"
-            html_arr.append(li)
-        html_arr.append("</ul>")
-        html_str = "".join(html_arr)
-        return html_str
+
     '''
 
     # Entrypoint for plugin
@@ -88,11 +77,26 @@ def token_input(user):
 
 
 def gen_comment_list(token, user):
-    data = load_quick_panel_data(
+    global data_store
+    data_store = load_quick_panel_data(
         token, user, 'Raphaeljunior', 'resolve-comments')
-    sublime.active_window().show_quick_panel(data, on_click, 1, 2)
+    sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
+
+
+def gen_comment_html(data):
+    html_arr = [
+        "<style> ul { height: 100px; display: flex; flex-direction \
+        : column; flex-wrap: wrap;} </style>",
+        "<ul>"]
+    html_arr.append("<h3>" + data[0] + "</h3>")
+    for i in range(1, len(data)):
+        li = "<li>" + data[i] + "</li>"
+        html_arr.append(li)
+    html_arr.append("</ul>")
+    html_str = "".join(html_arr)
+    return html_str
 
 
 def on_click(index):
@@ -110,7 +114,11 @@ def on_click(index):
         if len(sublime.active_window().views_in_group(numGroup)) == 0:
             sublime.active_window().focus_group(numGroup)
             createdView = sublime.active_window().new_file()
-            createdView.run_command("insert", {"characters": "Hello"})
+            createdView.erase_phantoms("test")
+            for i in range(len(data_store)):
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_comment_html(
+                        data_store[i]), sublime.LAYOUT_BLOCK)
 
 
 # Method loads Github pull_requests data by authenticating the user and token.
