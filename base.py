@@ -99,6 +99,16 @@ def on_click(index):
     if(index == -1):
         return -1
 
+    print("LAYOUT")
+    sublime.active_window().run_command(
+        'set_layout', {
+            "cols": [
+                0.0, 0.66, 1.0], "rows": [
+                0.0, 1.0], "cells": [
+                    [
+                        0, 0, 1, 1], [
+                            1, 0, 2, 1]]})
+
 
 # Method loads Github pull_requests data by authenticating the user and token.
 # After authentication plugin retrieves pull request data based on org name
