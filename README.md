@@ -53,5 +53,5 @@ coverage meets a particular standard. The goal is to ensure at any point, master
 
 All pull requests are subject to review by another team member after they have passed the precommit checks and Continuos integration
  checks before getting merge
- https://travis-ci.com/Raphaeljunior/resolve-comments/buildsd in.
+ https://travis-ci.com/Raphaeljunior/resolve-comments/builds in.
  
