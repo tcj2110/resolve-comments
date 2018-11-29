@@ -16,12 +16,7 @@ USER = 'Raphaeljunior'
 
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
-    # Generates simple list HTML for comment data
-    '''
-
-    '''
-
-    # Entrypoint for plugin
+    # Entrypoint for application
 
     def run(self, edit):
         username_input()
@@ -87,7 +82,7 @@ def gen_comment_list(token, user):
 
 def gen_comment_html(data):
     html_arr = [
-        "<style> ul { height: 100px; display: flex; flex-direction \
+        "<style> ul { display: flex; flex-direction \
         : column; flex-wrap: wrap;} </style>",
         "<ul>"]
     html_arr.append("<h3>" + data[0] + "</h3>")
@@ -95,6 +90,8 @@ def gen_comment_html(data):
         li = "<li>" + data[i] + "</li>"
         html_arr.append(li)
     html_arr.append("</ul>")
+    html_arr.append(
+        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
     html_str = "".join(html_arr)
     return html_str
 
@@ -105,7 +102,7 @@ def on_click(index):
 
     sublime.active_window().set_layout({
         "cols": [
-            0.0, 0.66, 1.0], "rows": [
+            0.0, 0.60, 1.0], "rows": [
             0.0, 1.0], "cells": [
             [
                 0, 0, 1, 1], [
