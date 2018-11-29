@@ -16,23 +16,7 @@ USER = 'Raphaeljunior'
 
 class InsertPanelCommand(sublime_plugin.TextCommand):
 
-    # Generates simple list HTML for comment data
-    '''
-    def gen_comment_html(self):
-        data = self.load_comment_data()
-        html_arr = [
-            "<style> ul { height: 100px; display: flex; flex-direction \
-            : column; flex-wrap: wrap;} </style>",
-            "<ul>"]
-        for body in data:
-            li = "<li>" + body + "</li>"
-            html_arr.append(li)
-        html_arr.append("</ul>")
-        html_str = "".join(html_arr)
-        return html_str
-    '''
-
-    # Entrypoint for plugin
+    # Entrypoint for application
 
     def run(self, edit):
         username_input()
@@ -88,16 +72,50 @@ def token_input(user):
 
 
 def gen_comment_list(token, user):
-    data = load_quick_panel_data(
+    global data_store
+    data_store = load_quick_panel_data(
         token, user, 'Raphaeljunior', 'resolve-comments')
-    sublime.active_window().show_quick_panel(data, on_click, 1, 2)
+    sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
+
+
+def gen_comment_html(data):
+    html_arr = [
+        "<style> ul { display: flex; flex-direction \
+        : column; flex-wrap: wrap;} </style>",
+        "<ul>"]
+    html_arr.append("<h3>" + data[0] + "</h3>")
+    for i in range(1, len(data)):
+        li = "<li>" + data[i] + "</li>"
+        html_arr.append(li)
+    html_arr.append("</ul>")
+    html_arr.append(
+        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
+    html_str = "".join(html_arr)
+    return html_str
 
 
 def on_click(index):
     if(index == -1):
         return -1
+
+    sublime.active_window().set_layout({
+        "cols": [
+            0.0, 0.60, 1.0], "rows": [
+            0.0, 1.0], "cells": [
+            [
+                0, 0, 1, 1], [
+                1, 0, 2, 1]]})
+    for numGroup in range(sublime.active_window().num_groups()):
+        if len(sublime.active_window().views_in_group(numGroup)) == 0:
+            sublime.active_window().focus_group(numGroup)
+            createdView = sublime.active_window().new_file()
+            createdView.erase_phantoms("test")
+            for i in range(len(data_store)):
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_comment_html(
+                        data_store[i]), sublime.LAYOUT_BLOCK)
 
 
 # Method loads Github pull_requests data by authenticating the user and token.
