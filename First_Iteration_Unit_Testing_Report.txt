@@ -1,0 +1,99 @@
+Ran 6 tests in 0.608s
+OK
+UnitTesting: Done.
+The command "sh travis.sh run_tests" exited with 0.
+0.00s$ cd utils
+The command "cd utils" exited with 0.
+0.44s$ nosetests
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+OK
+The command "nosetests" exited with 0.
+after_success.1
+0.00s$ if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; brew install python || brew upgrade python; fi
+after_success.2
+2.66s$ pip3 install python-coveralls;
+Collecting python-coveralls
+  Downloading https://files.pythonhosted.org/packages/2f/4a/0f776edd7d985e5fc456a8430bde69ce0701f6b6bae17586c74a309f89ae/python_coveralls-2.9.1-py2.py3-none-any.whl
+Requirement already satisfied: six in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from python-coveralls) (1.11.0)
+Collecting coverage==4.0.3 (from python-coveralls)
+  Downloading https://files.pythonhosted.org/packages/76/b4/3777a6bae434240b1fcbbda6cb30085bd897b3519acfffea498ee9f41038/coverage-4.0.3.tar.gz (354kB)
+    100% |████████████████████████████████| 358kB 5.6MB/s 
+Requirement already satisfied: requests in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from python-coveralls) (2.20.0)
+Requirement already satisfied: PyYAML in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from python-coveralls) (3.13)
+Requirement already satisfied: urllib3<1.25,>=1.21.1 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests->python-coveralls) (1.24)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests->python-coveralls) (3.0.4)
+Requirement already satisfied: certifi>=2017.4.17 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests->python-coveralls) (2018.10.15)
+Requirement already satisfied: idna<2.8,>=2.5 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests->python-coveralls) (2.7)
+Building wheels for collected packages: coverage
+  Running setup.py bdist_wheel for coverage ... done
+  Stored in directory: /home/travis/.cache/pip/wheels/a2/8a/41/b08899c07a72eacf589cfbe3aa946e3634cb074dd8263f781e
+Successfully built coverage
+Installing collected packages: coverage, python-coveralls
+  Found existing installation: coverage 4.5.1
+    Uninstalling coverage-4.5.1:
+      Successfully uninstalled coverage-4.5.1
+Successfully installed coverage-4.0.3 python-coveralls-2.9.1
+after_success.3
+0.84s$ pip3 install codecov;
+Collecting codecov
+  Downloading https://files.pythonhosted.org/packages/8b/28/4c1950a61c3c5786f0f34d643d0d28ec832433c9a7c0bd157690d4eb1d5f/codecov-2.0.15-py2.py3-none-any.whl
+Requirement already satisfied: requests>=2.7.9 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from codecov) (2.20.0)
+Requirement already satisfied: coverage in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from codecov) (4.0.3)
+Requirement already satisfied: certifi>=2017.4.17 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests>=2.7.9->codecov) (2018.10.15)
+Requirement already satisfied: urllib3<1.25,>=1.21.1 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests>=2.7.9->codecov) (1.24)
+Requirement already satisfied: idna<2.8,>=2.5 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests>=2.7.9->codecov) (2.7)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages (from requests>=2.7.9->codecov) (3.0.4)
+Installing collected packages: codecov
+Successfully installed codecov-2.0.15
+after_success.4
+0.24s$ coveralls
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): coveralls.io
+Traceback (most recent call last):
+  File "/home/travis/virtualenv/python3.6.3/bin/coveralls", line 11, in <module>
+    sys.exit(wear())
+  File "/home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages/coveralls/__init__.py", line 97, in wear
+    skip_ssl_verify=args.skip_ssl_verify,
+  File "/home/travis/virtualenv/python3.6.3/lib/python3.6/site-packages/coveralls/api.py", line 8, in post
+    return requests.post(url, files={'json_file': json_file}, verify=(not skip_ssl_verify))
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/api.py", line 88, in post
+    return request('post', url, data=data, **kwargs)
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/api.py", line 44, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/sessions.py", line 335, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/sessions.py", line 438, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/adapters.py", line 292, in send
+    timeout=timeout
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/packages/urllib3/connectionpool.py", line 423, in urlopen
+    conn = self._get_conn(timeout=pool_timeout)
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/packages/urllib3/connectionpool.py", line 238, in _get_conn
+    return conn or self._new_conn()
+  File "/home/travis/build/Raphaeljunior/resolve-comments/utils/requests/packages/urllib3/connectionpool.py", line 562, in _new_conn
+    strict=self.strict)
+TypeError: __init__() got an unexpected keyword argument 'strict'
+after_success.5
+0.18s$ codecov
+      _____          _
+     / ____|        | |
+    | |     ___   __| | ___  ___ _____   __
+    | |    / _ \ / _  |/ _ \/ __/ _ \ \ / /
+    | |___| (_) | (_| |  __/ (_| (_) \ V /
+     \_____\___/ \____|\___|\___\___/ \_/
+                                    v2.0.15
+==> Detecting CI provider
+    Travis Detected
+==> Preparing upload
+==> Processing gcov (disable by -X gcov)
+    Executing gcov (find /home/travis/build/Raphaeljunior/resolve-comments -not -path './bower_components/**' -not -path './node_modules/**' -not -path './vendor/**' -type f -name '*.gcno'  -exec gcov -pb  {} +)
+==> Collecting reports
+Error: No coverage report found
+Tip: See an example python repo: https://github.com/codecov/example-python
+Support channels:
+  Email:   hello@codecov.io
+  IRC:     #codecov
+  Gitter:  https://gitter.im/codecov/support
+  Twitter: @codecov
+Done. Your build exited with 0.
