@@ -3,6 +3,7 @@ import sublime_plugin
 import sublime
 import sys
 import os
+from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import authenticate  # noqa: E402
 
@@ -52,6 +53,7 @@ def username_input():
 def token_input(user):
     def on_done(token_string):
         token = token_string.strip()
+        print(extract_path())
         gen_comment_list(token, user)
 
     def on_change(token_string):
@@ -69,6 +71,19 @@ def token_input(user):
 
 #  Manager function that uses helper functions to show
 #  comments in side popup
+
+
+def extract_path():
+    env_var = sublime.active_window().extract_variables()
+    # file = env_var['file']
+    path = env_var['file_path']
+    print(path)
+    if call(["git", "branch"], stderr=STDOUT,
+            stdout=open(os.devnull, 'w'), cwd=path) != 0:
+        return path
+    else:
+        root = check_output(["git", "rev-parse", "--show-toplevel"], cwd=path)
+        return root
 
 
 def gen_comment_list(token, user):
