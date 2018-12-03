@@ -91,8 +91,7 @@ def extract_path():
 def gen_comment_list(token, user, path):
     global data_store
     org, repo = path.split('/')
-    data_store = load_quick_panel_data(
-        token, user, org, repo)
+    data_store = load_quick_panel_data(token, user, org, repo)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -119,12 +118,10 @@ def on_click(index):
         return -1
 
     sublime.active_window().set_layout({
-        "cols": [
-            0.0, 0.60, 1.0], "rows": [
-            0.0, 1.0], "cells": [
-            [
-                0, 0, 1, 1], [
-                1, 0, 2, 1]]})
+        "cols": [0.0, 0.60, 1.0],
+        "rows": [0.0, 1.0],
+        "cells": [ [0, 0, 1, 1], [1, 0, 2, 1] ] })
+
     for numGroup in range(sublime.active_window().num_groups()):
         if len(sublime.active_window().views_in_group(numGroup)) == 0:
             sublime.active_window().focus_group(numGroup)

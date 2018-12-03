@@ -30,12 +30,9 @@ class Authenticate:
             "sort": "pushed",
             "direction": "asc"
         }
-        response = requests.get(
-            git_constants.REPOS,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
+        response = requests.get(git_constants.REPOS,
+                                auth=(self.username, self.token),
+                                params=params)
         self.repos = response.json()
         print(self.repos)
 
@@ -46,12 +43,9 @@ class Authenticate:
             "direction": "desc"
         }
         url = git_constants.GITHUB_REPO + ("%s/%s/pulls" % (owner, repo))
-        response = requests.get(
-            url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
+        response = requests.get(url,
+                                auth=(self.username, self.token),
+                                params=params)
         return response.json()
 
     def get_pr_reviews(self, owner, repo, pr_id):
@@ -59,12 +53,9 @@ class Authenticate:
         # list = []
         url = "https://api.github.com/repos/:" + str(owner) + "/:" + str(repo)
         url += "/pulls/:" + str(pr_id) + "/reviews"
-        response = requests.get(
-            url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
+        response = requests.get(url,
+                                auth=(self.username, self.token),
+                                params=params)
         return response.json()
 
     def get_pr_comments(self, owner, repo, pr_id):
@@ -75,12 +66,9 @@ class Authenticate:
             "direction": "desc"
         }
         print(url)
-        response = requests.get(
-            url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
+        response = requests.get(url,
+                                auth=(self.username, self.token),
+                                params=params)
         return response.json()
 
     def get_repo_issues(self, owner, repo):
