@@ -3,6 +3,7 @@ import sublime_plugin
 import sublime
 import sys
 import os
+from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import authenticate  # noqa: E402
 
@@ -52,7 +53,8 @@ def username_input():
 def token_input(user):
     def on_done(token_string):
         token = token_string.strip()
-        gen_comment_list(token, user)
+        path = extract_path()
+        gen_comment_list(token, user, path)
 
     def on_change(token_string):
         pass
@@ -71,10 +73,26 @@ def token_input(user):
 #  comments in side popup
 
 
-def gen_comment_list(token, user):
+def extract_path():
+    env_var = sublime.active_window().extract_variables()
+    # file = env_var['file']
+    path = env_var['file_path']
+    if call(["git", "branch"], stderr=STDOUT,
+            stdout=open(os.devnull, 'w'), cwd=path) == 0:
+        root = check_output(["git", "rev-parse", "--show-toplevel"], cwd=path)
+        path = root.rstrip()
+    os.chdir(path)
+    # Write exception case for opening file that may not exist
+    with open('./.git/config') as f:
+        github_path = f.read().splitlines()[6][22:-4]
+    return github_path
+
+
+def gen_comment_list(token, user, path):
     global data_store
+    org, repo = path.split('/')
     data_store = load_quick_panel_data(
-        token, user, 'Raphaeljunior', 'resolve-comments')
+        token, user, org, repo)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -132,8 +150,9 @@ def load_quick_panel_data(token, user, org, repo):
     data = []
     pull_requests = auth.get_pull_requests(org, repo)
     if('message' in pull_requests and
-            pull_requests['message'] == 'Bad credentials'):
-        error_message("Error: Username or Token Invalid")
+            (pull_requests['message'] == 'Bad credentials' or
+                pull_requests['message'] == 'Not Found')):
+        error_message("Error: " + pull_requests['message'])
         return []
     for req in pull_requests:
         title = req['title']
