@@ -54,7 +54,10 @@ def token_input(user):
     def on_done(token_string):
         token = token_string.strip()
         path = extract_path()
-        gen_comment_list(token, user, path)
+        if(path):
+            gen_comment_list(token, user, path)
+        else:
+            error_message("Error: file not found in git repository")
 
     def on_change(token_string):
         pass
@@ -76,7 +79,10 @@ def token_input(user):
 def extract_path():
     env_var = sublime.active_window().extract_variables()
     # file = env_var['file']
-    path = env_var['file_path']
+    if('file_path' in env_var):
+        path = env_var['file_path']
+    else:
+        return None
     if call(["git", "branch"], stderr=STDOUT,
             stdout=open(os.devnull, 'w'), cwd=path) == 0:
         root = check_output(["git", "rev-parse", "--show-toplevel"], cwd=path)
@@ -84,7 +90,11 @@ def extract_path():
     os.chdir(path)
     # Write exception case for opening file that may not exist
     with open('./.git/config') as f:
-        github_path = f.read().splitlines()[6][22:-4]
+        url = f.read().splitlines()[6]
+        if(url[7] == 'g'):
+            github_path = url[22:-4]
+        else:
+            github_path = url[26:-4]
     return github_path
 
 
