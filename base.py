@@ -45,9 +45,30 @@ class PreferencesCommand(sublime_plugin.TextCommand):
         # print(self.mongo_client)
 
 
+# Class that stores methods to toggle plugin preferences
+class PreferenceToggle:
+
+    def __init__(self):
+        self.mongo_client = mongo_connect.MongoConnect()
+
+    def window_click(self, index):
+        if(index == -1):
+            return -1
+        elif(index == 0):
+            print("0.33")
+        elif(index == 1):
+            print("0.50")
+        else:
+            print("0.66")
+
+    def window_preference(self, user):
+        sublime.active_window().show_quick_panel(
+            self.mongo_client.window_pref, self.window_click, 1, 2)
+
 # Method opens up input window and prompts username.
 # When user presses enter on_done function calls
 # token_input.
+
 
 def username_input():
     def on_done(user_string):
@@ -127,7 +148,8 @@ def check_auth(token, user):
         error_message("Error: Bad Credentials")
         return False
     if(preference_mode):
-        window_preference()
+        toggle = PreferenceToggle()
+        toggle.window_preference(user)
     else:
         gen_comment_list(token, user, auth)
 
@@ -205,23 +227,6 @@ def load_quick_panel_data(token, user, auth):
         content = [title, body, user]
         data.append(content)
     return data
-
-
-def window_click(index):
-    if(index == -1):
-        return -1
-    elif(index == 0):
-        print("0.33")
-    elif(index == 1):
-        print("0.50")
-    else:
-        print("0.66")
-
-
-def window_preference():
-    mongo_client = mongo_connect.MongoConnect()
-    sublime.active_window().show_quick_panel(
-        mongo_client.window_pref, window_click, 1, 2)
 
 
 def error_message(e_mes):
