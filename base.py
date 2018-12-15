@@ -1,13 +1,16 @@
-
-from utils import mongo_connect
-from utils import authenticate
 import sublime_plugin
 import sublime
 import sys
 import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import mongo_connect  # noqa: E402
+from utils import authenticate  # noqa: E402
 
+
+# Global variable for plugin preferences
+
+preferences = {"window": 0.5}
 
 # Class provides the entrypoint for the plugin.
 # All helper functions are external to
@@ -29,10 +32,27 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
 
 class PreferencesCommand(sublime_plugin.TextCommand):
 
+    # Method returns screen size in print statement
+    # When complete will insert screen preference to mongo
+    def click_pref(self, index):
+        if(index == -1):
+            return -1
+        elif(index == 0):
+            print("0.33")
+        elif(index == 1):
+            print("0.55")
+        else:
+            print("0.66")
+
+    def window_preference(self):
+        sublime.active_window().show_quick_panel(
+            self.mongo_client.window_pref, self.click_pref, 1, 2)
+
     def run(self, edit):
-        mongo_client = mongo_connect.MongoConnect()
-        print(mongo_client)
-        print("Preference command runs")
+        self.mongo_client = mongo_connect.MongoConnect()
+        print("START")
+        self.window_preference()
+        print(self.mongo_client)
 
 
 # Method opens up input window and prompts username.
@@ -142,7 +162,7 @@ def on_click(index):
 
     sublime.active_window().set_layout({
         "cols": [
-            0.0, 0.60, 1.0], "rows": [
+            0.0, 0.40, 1.0], "rows": [
             0.0, 1.0], "cells": [
             [
                 0, 0, 1, 1], [
