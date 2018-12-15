@@ -17,15 +17,14 @@ The plugin must be run in the Sublime Text 3 interface within a folder that has 
 
         view.run_command("insert_panel")
         
-On running this command you will be promped with a username and password on the bottom of the screen. Type your Github username and password to run the plugin. Given that the authentication is correct the user should be presented with a panel of issues and pull requests that are searchable and selectable. 
+On running this command you will be promped with a username and password on the bottom of the screen. Type your Github username and [personal access token](https://blog.github.com/2013-05-16-personal-api-tokens/) to run the plugin. Given that the authentication is correct the user should be presented with a panel of issues and pull requests that are searchable and selectable.
  
-`
 # Environment
 
 Project uses virtualenv [https://packaging.python.org/guides/installing-using-pip-and-virtualenv/] for
 package management. 
-To get started run 
-        `python3 -m pip install virtualenv
+To get started run
+        `python3 -m pip install virtualenv`
 
 If you encounter any trouble please visit the linked virtualenv installation page. 
 To install the packages and replicate the environment, CD into the project root folder and run
