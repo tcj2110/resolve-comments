@@ -10,7 +10,9 @@ from utils import authenticate  # noqa: E402
 
 # Global variable for plugin preferences
 
+preference_mode = False
 preferences = {"window": 0.5}
+
 
 # Class provides the entrypoint for the plugin.
 # All helper functions are external to
@@ -34,25 +36,13 @@ class PreferencesCommand(sublime_plugin.TextCommand):
 
     # Method returns screen size in print statement
     # When complete will insert screen preference to mongo
-    def click_pref(self, index):
-        if(index == -1):
-            return -1
-        elif(index == 0):
-            print("0.33")
-        elif(index == 1):
-            print("0.55")
-        else:
-            print("0.66")
-
-    def window_preference(self):
-        sublime.active_window().show_quick_panel(
-            self.mongo_client.window_pref, self.click_pref, 1, 2)
 
     def run(self, edit):
-        self.mongo_client = mongo_connect.MongoConnect()
-        print("START")
-        self.window_preference()
-        print(self.mongo_client)
+        global preference_mode
+        preference_mode = True
+        username_input()
+        # self.window_preference()
+        # print(self.mongo_client)
 
 
 # Method opens up input window and prompts username.
@@ -85,11 +75,7 @@ def username_input():
 def token_input(user):
     def on_done(token_string):
         token = token_string.strip()
-        path = extract_path()
-        if(path):
-            gen_comment_list(token, user, path)
-        else:
-            error_message("Error: file not found in git repository")
+        check_auth(token, user)
 
     def on_change(token_string):
         pass
@@ -127,14 +113,29 @@ def extract_path():
             github_path = url[22:-4]
         else:
             github_path = url[26:-4]
-    return github_path
+    org, repo = github_path.split('/')
+    return (org, repo)
 
 
-def gen_comment_list(token, user, path):
+def check_auth(token, user):
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return False
+    auth = authenticate.Authenticate(token, user)
+    profile = auth.get_profile()
+    if('message' in profile):
+        error_message("Error: Bad Credentials")
+        return False
+    if(preference_mode):
+        window_preference()
+    else:
+        gen_comment_list(token, user, auth)
+
+
+def gen_comment_list(token, user, auth):
     global data_store
-    org, repo = path.split('/')
     data_store = load_quick_panel_data(
-        token, user, org, repo)
+        token, user, auth)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -182,13 +183,14 @@ def on_click(index):
 # After authentication plugin retrieves pull request data based on org name
 # and repo name.
 
+def load_quick_panel_data(token, user, auth):
 
-def load_quick_panel_data(token, user, org, repo):
-
-    if(user == "" or token == ""):
-        error_message("Error: Username or Token Left Blank")
+    path = extract_path()
+    if(not path):
+        error_message("Error: file not found in git repository")
         return []
-    auth = authenticate.Authenticate(token, user)
+    org, repo = path
+
     data = []
     pull_requests = auth.get_pull_requests(org, repo)
     if('message' in pull_requests and
@@ -203,6 +205,23 @@ def load_quick_panel_data(token, user, org, repo):
         content = [title, body, user]
         data.append(content)
     return data
+
+
+def window_click(index):
+    if(index == -1):
+        return -1
+    elif(index == 0):
+        print("0.33")
+    elif(index == 1):
+        print("0.50")
+    else:
+        print("0.66")
+
+
+def window_preference():
+    mongo_client = mongo_connect.MongoConnect()
+    sublime.active_window().show_quick_panel(
+        mongo_client.window_pref, window_click, 1, 2)
 
 
 def error_message(e_mes):

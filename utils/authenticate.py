@@ -21,7 +21,7 @@ class Authenticate:
         response = requests.get(git_constants.GITHUB_USER_URL,
                                 auth=(self.username, self.token))
         self.profile = response.json()
-        print(self.profile)
+        return self.profile
 
     def load_repos(self):
         params = {
