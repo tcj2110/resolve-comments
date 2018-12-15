@@ -1,14 +1,13 @@
 
+from utils import mongo_connect
+from utils import authenticate
 import sublime_plugin
 import sublime
 import sys
 import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import authenticate  # noqa: E402
 
-TOKEN = 'Nanosoft1*'
-USER = 'Raphaeljunior'
 
 # Class provides the entrypoint for the plugin.
 # All helper functions are external to
@@ -20,7 +19,20 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Entrypoint for application
 
     def run(self, edit):
+        mongo_client = mongo_connect.MongoConnect()
+        print(mongo_client)
         username_input()
+
+
+# Text command to open preference menu
+
+
+class PreferencesCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit):
+        mongo_client = mongo_connect.MongoConnect()
+        print(mongo_client)
+        print("Preference command runs")
 
 
 # Method opens up input window and prompts username.
