@@ -16,6 +16,8 @@ Mac Machines might also require an install of some xcode tools with the terminal
 The plugin must be run in the Sublime Text 3 interface within a folder that has an initialized git repository. To run the plugin simply click the view tab in the Sublime text interface and click the Show Console option. If done correctly there should be a console on the bottom of the screen. Starting the plugin requires running the following command in the console:
 
         view.run_command("insert_panel")
+        
+On running this command you will be promped with a username and password on the bottom of the screen. Type your Github username and password to run the plugin. Given that the authentication is correct the user should be presented with a panel of issues and pull requests that are searchable and selectable. 
  
 `
 # Environment
