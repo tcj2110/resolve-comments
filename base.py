@@ -10,7 +10,6 @@ from utils import authenticate  # noqa: E402
 
 # Global variable for plugin preferences
 
-preference_mode = False
 preferences = {"window": 0.5}
 
 
@@ -38,9 +37,8 @@ class PreferencesCommand(sublime_plugin.TextCommand):
     # When complete will insert screen preference to mongo
 
     def run(self, edit):
-        global preference_mode
         preference_mode = True
-        username_input()
+        username_input(preference_mode)
         # self.window_preference()
         # print(self.mongo_client)
 
@@ -70,10 +68,10 @@ class PreferenceToggle:
 # token_input.
 
 
-def username_input():
+def username_input(mode=False):
     def on_done(user_string):
         user = user_string.strip()
-        token_input(user)
+        token_input(user, mode)
 
     def on_change(user_string):
         pass
@@ -93,10 +91,10 @@ def username_input():
 # When user presses enter on_done function calls
 # gen_comment_list.
 
-def token_input(user):
+def token_input(user, mode):
     def on_done(token_string):
         token = token_string.strip()
-        check_auth(token, user)
+        check_auth(token, user, mode)
 
     def on_change(token_string):
         pass
@@ -138,26 +136,33 @@ def extract_path():
     return (org, repo)
 
 
-def check_auth(token, user):
+def check_auth(token, user, mode):
     if(user == "" or token == ""):
         error_message("Error: Username or Token Left Blank")
-        return False
+        return "Error: Username or Token Left Blank"
     auth = authenticate.Authenticate(token, user)
     profile = auth.get_profile()
     if('message' in profile):
         error_message("Error: Bad Credentials")
-        return False
-    if(preference_mode):
+        print(profile)
+        return profile
+    if(mode):
         toggle = PreferenceToggle()
         toggle.window_preference(user)
     else:
         gen_comment_list(token, user, auth)
+    return True
 
 
 def gen_comment_list(token, user, auth):
     global data_store
+    path = extract_path()
+    if(not path):
+        error_message("Error: file not found in git repository")
+        return
+    org, repo = path
     data_store = load_quick_panel_data(
-        token, user, auth)
+        auth, org, repo)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -205,13 +210,7 @@ def on_click(index):
 # After authentication plugin retrieves pull request data based on org name
 # and repo name.
 
-def load_quick_panel_data(token, user, auth):
-
-    path = extract_path()
-    if(not path):
-        error_message("Error: file not found in git repository")
-        return []
-    org, repo = path
+def load_quick_panel_data(auth, org, repo):
 
     data = []
     pull_requests = auth.get_pull_requests(org, repo)
