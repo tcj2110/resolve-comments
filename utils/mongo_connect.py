@@ -10,15 +10,20 @@ class MongoConnect:
         self.client = pymongo.MongoClient(
             "mongodb://arsalaanansari:resolve_comments1\
             @ds041404.mlab.com:41404/resolve-comments")
+        self.db = self.client['resolve-comments']
         self.window_pref = [
             "Compact : 1/3 Screen",
             "Normal: 1/2 Screen",
             "Large: 2/3 Screen"]
 
-    # Checks MongoDB database for whether user
+    # Adds user preferences to preferences mongoDB collection
+
+    def insert_pref(self, data):
+        self.pref = self.db.preferences
+        post_id = self.pref.insert_one(data).inserted_id
+        return post_id
 
     def remember_cred(self, username):
-        self.db = self.client['resolve-comments']
         rem = self.db.user_remember
         data = rem.find_one({"user": username})
         print(data)

@@ -53,7 +53,7 @@ class PreferenceToggle:
         if(index == -1):
             return -1
         elif(index == 0):
-            print("0.33")
+            self.mongo_client
         elif(index == 1):
             print("0.50")
         else:
