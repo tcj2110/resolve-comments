@@ -84,6 +84,19 @@ class Authenticate:
         return response.json()
 
     def get_repo_issues(self, owner, repo):
+        params = {
+            "state": "all",
+            "sort": "updated",
+            "direction": "desc"
+        }
+        url = git_constants.GITHUB_REPO + ("%s/%s/issues" % (owner, repo))
+        response = requests.get(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+
         # implemented = False
         # url = ' https://api.github.com/repos/:owner/:repo/issues'
-        pass
