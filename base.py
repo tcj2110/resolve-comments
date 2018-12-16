@@ -225,8 +225,19 @@ def load_quick_panel_data(auth, org, repo):
         user = req['user']['login']
         content = [title, body, user]
         data.append(content)
+#    issues = auth.get_repo_issues(org, repo)
+#    if('message' in issues and
+#        (issues['message'] == 'Bad credentials' or
+#            issues['message'] == 'Not Found')):
+#        error_message("Error: " + issues['message'])
+#        return []
+#    for issue in issues:
+#        title = issue['title']
+#        body = issue['body']
+#        user = issue['user']['login']
+#        content = [title, body, user]
+#        data.append(content)
     return data
-
 
 def error_message(e_mes):
     sublime.active_window().show_input_panel(
