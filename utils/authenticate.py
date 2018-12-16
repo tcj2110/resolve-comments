@@ -97,6 +97,3 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
-
-        # implemented = False
-        # url = ' https://api.github.com/repos/:owner/:repo/issues'
