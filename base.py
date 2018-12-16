@@ -1,14 +1,17 @@
-
 import sublime_plugin
 import sublime
 import sys
 import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import mongo_connect  # noqa: E402
 from utils import authenticate  # noqa: E402
 
-TOKEN = 'Nanosoft1*'
-USER = 'Raphaeljunior'
+
+# Global variable for plugin preferences
+
+preferences = {"window": 0.5}
+
 
 # Class provides the entrypoint for the plugin.
 # All helper functions are external to
@@ -20,17 +23,55 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Entrypoint for application
 
     def run(self, edit):
+        mongo_client = mongo_connect.MongoConnect()
+        print(mongo_client)
         username_input()
 
+
+# Text command to open preference menu
+
+
+class PreferencesCommand(sublime_plugin.TextCommand):
+
+    # Method returns screen size in print statement
+    # When complete will insert screen preference to mongo
+
+    def run(self, edit):
+        preference_mode = True
+        username_input(preference_mode)
+        # self.window_preference()
+        # print(self.mongo_client)
+
+
+# Class that stores methods to toggle plugin preferences
+class PreferenceToggle:
+
+    def __init__(self):
+        self.mongo_client = mongo_connect.MongoConnect()
+
+    def window_click(self, index):
+        if(index == -1):
+            return -1
+        elif(index == 0):
+            print("0.33")
+        elif(index == 1):
+            print("0.50")
+        else:
+            print("0.66")
+
+    def window_preference(self, user):
+        sublime.active_window().show_quick_panel(
+            self.mongo_client.window_pref, self.window_click, 1, 2)
 
 # Method opens up input window and prompts username.
 # When user presses enter on_done function calls
 # token_input.
 
-def username_input():
+
+def username_input(mode=False):
     def on_done(user_string):
         user = user_string.strip()
-        token_input(user)
+        token_input(user, mode)
 
     def on_change(user_string):
         pass
@@ -50,14 +91,10 @@ def username_input():
 # When user presses enter on_done function calls
 # gen_comment_list.
 
-def token_input(user):
+def token_input(user, mode):
     def on_done(token_string):
         token = token_string.strip()
-        path = extract_path()
-        if(path):
-            gen_comment_list(token, user, path)
-        else:
-            error_message("Error: file not found in git repository")
+        check_auth(token, user, mode)
 
     def on_change(token_string):
         pass
@@ -95,14 +132,37 @@ def extract_path():
             github_path = url[22:-4]
         else:
             github_path = url[26:-4]
-    return github_path
+    org, repo = github_path.split('/')
+    return (org, repo)
 
 
-def gen_comment_list(token, user, path):
+def check_auth(token, user, mode):
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return "Error: Username or Token Left Blank"
+    auth = authenticate.Authenticate(token, user)
+    profile = auth.get_profile()
+    if('message' in profile):
+        error_message("Error: Bad Credentials")
+        print(profile)
+        return profile
+    if(mode):
+        toggle = PreferenceToggle()
+        toggle.window_preference(user)
+    else:
+        gen_comment_list(token, user, auth)
+    return True
+
+
+def gen_comment_list(token, user, auth):
     global data_store
-    org, repo = path.split('/')
+    path = extract_path()
+    if(not path):
+        error_message("Error: file not found in git repository")
+        return
+    org, repo = path
     data_store = load_quick_panel_data(
-        token, user, org, repo)
+        auth, org, repo)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 # Method that responds to clicking quickpanel item
@@ -130,7 +190,7 @@ def on_click(index):
 
     sublime.active_window().set_layout({
         "cols": [
-            0.0, 0.60, 1.0], "rows": [
+            0.0, 0.40, 1.0], "rows": [
             0.0, 1.0], "cells": [
             [
                 0, 0, 1, 1], [
@@ -150,13 +210,8 @@ def on_click(index):
 # After authentication plugin retrieves pull request data based on org name
 # and repo name.
 
+def load_quick_panel_data(auth, org, repo):
 
-def load_quick_panel_data(token, user, org, repo):
-
-    if(user == "" or token == ""):
-        error_message("Error: Username or Token Left Blank")
-        return []
-    auth = authenticate.Authenticate(token, user)
     data = []
     pull_requests = auth.get_pull_requests(org, repo)
     if('message' in pull_requests and
