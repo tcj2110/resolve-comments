@@ -1,8 +1,8 @@
 import sys
 import os
+import json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests  # noqa: E402
-# removed 'from utils'; this file is already in utils
 import constants as git_constants  # noqa: E402
 
 
@@ -79,22 +79,22 @@ class Authenticate:
             "direction": "desc"
         }
 
-        # print(url)
         response = requests.get(
             url,
             auth=(
                 self.username,
                 self.token),
             params=params)
-
+        print("RESPONSE")
+        print(response.json())
         return response.json()
 
-    #list all the issues, given a repository name and correct credentials
+    # list all the issues, given a repository name and correct credentials
     def get_repo_issues(self, owner, repo):
         params = {
-            #"state": "all",
-            #"sort": "updated",
-            #"direction": "desc"
+            # "state": "all",
+            # "sort": "updated",
+            # "direction": "desc"
         }
         url = git_constants.GITHUB_REPO + ("%s/%s/issues" % (owner, repo))
         response = requests.get(
@@ -106,49 +106,52 @@ class Authenticate:
 
         return response.json()
 
-    #given a specific issue, we can list all the comments
+    # given a specific issue, we can list all the comments
     def get_comments_on_issue(self, owner, repo, number):
-        #url='https://api.github.com/repos/:owner/:repo/issues/:number/comments'
-        params ={
-        }
-        url = git_constants.GITHUB_REPO + ("%s/%s/issues/%s/comments" % (owner, repo, number))
-        response = requests.get(
-            url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
-        return response.json()
-    def post_issue_comment(self,owner, repo,number,body):
-        assert("body!=""")
-        #url ='https://api.github.com/repos/:owner/:repo/issues/:number/comments'
-        params ={
-            "body":body
-        }
-        url = git_constants.GITHUB_REPO + \
-              ("%s/%s/issues/%s/comments" %(owner, repo, number ))
-        response = requests.get(
-            url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
-        return response.json()
-
-
-
-
-    def post_pr_comment(self ,owner, repo ,number ,body, commit_id,path,position ):
-        #url ='https://api.github.com/repos/:owner/:repo/pulls/:number/comments'
-        #note: all paramaters are required and position must be an integer
+        # url='https://api.github.com/repos/:owner/:repo/issues/:number/comments'
         params = {
-            "body":body,
-            "commit_id":commit_id,
-            "path":path,
-            "position":position
         }
         url = git_constants.GITHUB_REPO + \
-              ("%s/%s/pulls/%s/comments" %(owner, repo, number))
+            ("%s/%s/issues/%s/comments" % (owner, repo, number))
+        response = requests.get(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+
+    def post_issue_comment(self, owner, repo, number, body):
+        body = body.replace('\n', '\\n')
+        params = {"body": body}
+        ses = requests.Session()
+        ses.auth = (self.username, self.token)
+
+        url = git_constants.GITHUB_REPO + \
+            ("%s/%s/issues/%s/comments" % (owner, repo, number))
+        response = ses.post(
+            url,
+            json.dumps(params))
+        return response.json()
+
+    def post_pr_comment(
+            self,
+            owner,
+            repo,
+            number,
+            body,
+            commit_id,
+            path,
+            position):
+        # note: all paramaters are required and position must be an integer
+        params = {
+            "body": body,
+            "commit_id": commit_id,
+            "path": path,
+            "position": position
+        }
+        url = git_constants.GITHUB_REPO + \
+            ("%s/%s/pulls/%s/comments" % (owner, repo, number))
         response = requests.post(
             url,
             auth=(
@@ -156,14 +159,15 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
-    def edit_pr_comment(self,owner,repo,comment_id, body):
-        #url=https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
-        #note: body is required
+
+    def edit_pr_comment(self, owner, repo, comment_id, body):
+        # url=https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
+        # note: body is required
         params = {
-            "body":body
+            "body": body
         }
         url = git_constants.GITHUB_REPO + \
-              ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
+            ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
         response = requests.patch(
             url,
             auth=(
@@ -171,19 +175,21 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
-    def del_pr_comment(self,owner, repo, comment_id):
-        #url ='https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
+
+    def del_pr_comment(self, owner, repo, comment_id):
+        # url
+        # ='https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
 
         params = {}
         url = git_constants.GITHUB_REPO + \
-              ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
+            ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
         response = requests.delete(
             url,
             auth=(
                 self.username,
                 self.token),
             params=params)
-        ##below should return 204
+        # below should return 204
         return response.status_code()
 
 
@@ -195,4 +201,4 @@ class Authenticate:
 #
 # pr2 = x.get_comments_on_issue( 'RaphaelJunior', 'resolve-comments' , 20)
 # print(pr2)
-# 
+#
