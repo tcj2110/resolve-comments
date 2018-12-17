@@ -24,7 +24,7 @@ class MongoConnect:
                              "$set": {"window_size": data['window_size']}},
                              upsert=True)
 
-    def remember_cred(self, username):
-        rem = self.db.user_remember
-        data = rem.find_one({"user": username})
-        print(data)
+    def load_pref(self, user):
+        self.pref = self.db.preferences
+        res = self.pref.find_one({"user": user})
+        return res['window_size']
