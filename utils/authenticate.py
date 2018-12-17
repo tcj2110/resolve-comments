@@ -2,7 +2,8 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests  # noqa: E402
-from utils import constants as git_constants  # noqa: E402
+#removed 'from utils'; this file is already in utils
+import constants as git_constants  # noqa: E402
 
 
 class Authenticate:
@@ -59,13 +60,17 @@ class Authenticate:
         # list = []
         url = "https://api.github.com/repos/:" + str(owner) + "/:" + str(repo)
         url += "/pulls/:" + str(pr_id) + "/reviews"
-        ''' response = requests.get(
+
+        params = {}
+      
+
+        response = requests.get(
             url,
             auth=(
                 self.username,
                 self.token),
-            params=params)
-        return response.json() '''
+            params=params) 
+        return response.json()
 
     def get_pr_comments(self, owner, repo, pr_id):
         url = git_constants.GITHUB_REPO + \
@@ -74,13 +79,16 @@ class Authenticate:
             "sort": "created",
             "direction": "desc"
         }
-        print(url)
+
+
+        #print(url)
         response = requests.get(
             url,
             auth=(
                 self.username,
                 self.token),
             params=params)
+
         return response.json()
 
     def get_repo_issues(self, owner, repo):
