@@ -10,7 +10,7 @@ from utils import authenticate  # noqa: E402
 
 # Global variable for plugin preferences
 
-preferences = {"window_size": 0.33, "issue_pr": False}
+preferences = {"window_size": 0.33, "issue_pr": 1}
 
 
 # Class provides the entrypoint for the plugin.
@@ -151,31 +151,33 @@ def gen_comment_list(token, user, auth):
 def load_quick_panel_data(auth, org, repo):
 
     data = []
-    pull_requests = auth.get_pull_requests(org, repo)
-    if('message' in pull_requests and
-            (pull_requests['message'] == 'Bad credentials' or
-                pull_requests['message'] == 'Not Found')):
-        error_message("Error: " + pull_requests['message'])
-        return []
-    for req in pull_requests:
-        title = req['title']
-        body = req['body']
-        user = req['user']['login']
-        content = [title, body, user]
-        data.append(content)
-    '''issues = auth.get_repo_issues(org, repo)
-    print(issues)
-    if('message' in issues and
-        (issues['message'] == 'Bad credentials' or
-            issues['message'] == 'Not Found')):
-        error_message("Error: " + issues['message'])
-        return []
-    for issue in issues:
-        title = issue['title']
-        body = issue['body']
-        user = issue['user']['login']
-        content = [title, body, user]
-        data.append(content) '''
+
+    if(preferences['issue_pr'] == 1 or preferences['issue_pr'] == 2):
+        pull_requests = auth.get_pull_requests(org, repo)
+        if('message' in pull_requests and
+                (pull_requests['message'] == 'Bad credentials' or
+                    pull_requests['message'] == 'Not Found')):
+            error_message("Error: " + pull_requests['message'])
+            return []
+        for req in pull_requests:
+            title = req['title']
+            body = req['body']
+            user = req['user']['login']
+            content = [title, body, user, "Pull Request"]
+            data.append(content)
+    elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
+        issues = auth.get_repo_issues(org, repo)
+        if('message' in issues and
+            (issues['message'] == 'Bad credentials' or
+                issues['message'] == 'Not Found')):
+            error_message("Error: " + issues['message'])
+            return []
+        for issue in issues:
+            title = issue['title']
+            body = issue['body']
+            user = issue['user']['login']
+            content = [title, body, user, "Issue"]
+            data.append(content)
 
     return data
 

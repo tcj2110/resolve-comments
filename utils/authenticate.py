@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests  # noqa: E402
-#removed 'from utils'; this file is already in utils
+# removed 'from utils'; this file is already in utils
 import constants as git_constants  # noqa: E402
 
 
@@ -62,14 +62,13 @@ class Authenticate:
         url += "/pulls/:" + str(pr_id) + "/reviews"
 
         params = {}
-      
 
         response = requests.get(
             url,
             auth=(
                 self.username,
                 self.token),
-            params=params) 
+            params=params)
         return response.json()
 
     def get_pr_comments(self, owner, repo, pr_id):
@@ -80,8 +79,7 @@ class Authenticate:
             "direction": "desc"
         }
 
-
-        #print(url)
+        # print(url)
         response = requests.get(
             url,
             auth=(
@@ -104,5 +102,5 @@ class Authenticate:
                 self.username,
                 self.token),
             params=params)
-        print(response)
+
         return response.json()
