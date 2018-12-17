@@ -137,11 +137,12 @@ def gen_comment_list(token, user, auth):
         error_message("Error: file not found in git repository")
         return
     org, repo = path
-    data_store = load_quick_panel_data(
-        auth, org, repo)
     pref_toggle = pref.PreferenceToggle()
     preferences = pref_toggle.load_window_preference(user)
-    sublime.active_window().show_quick_panel(data_store[:-1], on_click, 1, 2)
+    data_store = load_quick_panel_data(
+        auth, org, repo)
+    sublime.active_window().show_quick_panel(
+        data_store[:-1], lambda index: on_click(index, auth, org, repo), 1, 2)
 
 
 # Method loads Github pull_requests data by authenticating the user and token.
@@ -151,6 +152,7 @@ def gen_comment_list(token, user, auth):
 def load_quick_panel_data(auth, org, repo):
 
     data = []
+    print(preferences)
 
     if(preferences['issue_pr'] == 1 or preferences['issue_pr'] == 2):
         pull_requests = auth.get_pull_requests(org, repo)
@@ -165,8 +167,17 @@ def load_quick_panel_data(auth, org, repo):
             user = req['user']['login']
             state = req['state']
             url = req['html_url']
-            content = [title, body, user, "Pull Request", state, url]
-            data.append(content)
+            iden = req['number']
+            content = [
+                title,
+                body,
+                user,
+                "Pull Request",
+                state,
+                url,
+                str(iden)]
+            data.append(content
+                        )
     elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
         issues = auth.get_repo_issues(org, repo)
         if('message' in issues and
@@ -180,7 +191,8 @@ def load_quick_panel_data(auth, org, repo):
             user = issue['user']['login']
             state = issue['state']
             url = issue['html_url']
-            content = [title, body, user, "Issue", state, url]
+            iden = issue['number']
+            content = [title, body, user, "Issue", state, url, str(iden)]
             data.append(content)
 
     return data
@@ -189,7 +201,7 @@ def load_quick_panel_data(auth, org, repo):
 # Method that responds to clicking quickpanel item
 
 
-def on_click(index):
+def on_click(index, auth, org, repo):
     if(index == -1):
         return -1
 
@@ -200,13 +212,16 @@ def on_click(index):
             [
                 0, 0, 1, 1], [
                 1, 0, 2, 1]]})
+    data = data_store[index]
+    # comment_data = auth.get_pr_comments(org,repo, int(data[-1]))
+    # print(comment_data)
     for nGroup in range(sublime.active_window().num_groups()):
         if len(sublime.active_window().views_in_group(nGroup)) == 0:
             sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().new_file()
             createdView.add_phantom(
                 "test", createdView.sel()[0], gen_comment_html(
-                    data_store[index]), sublime.LAYOUT_BLOCK,
+                    data), sublime.LAYOUT_BLOCK,
                 lambda href: sublime.run_command(
                     'open_url', {'url': href}))
         elif(nGroup == 1):
@@ -214,7 +229,7 @@ def on_click(index):
             createdView = sublime.active_window().active_view_in_group(nGroup)
             createdView.add_phantom(
                 "test", createdView.sel()[0], gen_comment_html(
-                    data_store[index]), sublime.LAYOUT_BLOCK,
+                    data), sublime.LAYOUT_BLOCK,
                 lambda href: sublime.run_command(
                     'open_url', {'url': href}))
 
@@ -232,7 +247,7 @@ def gen_comment_html(data):
     for i in range(1, len(data) - 1):
         li = "<li>" + data[i] + "</li>"
         html_arr.append(li)
-    link = "Click <a href='" + data[-1] + \
+    link = "Click <a href='" + data[-2] + \
         "'>here</a> to go to Pull Request Link "
     html_arr.append(
         "<li>" + link + "</li>")
