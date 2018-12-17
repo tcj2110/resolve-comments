@@ -15,13 +15,17 @@ class MongoConnect:
             "Compact : 1/3 Screen",
             "Normal: 1/2 Screen",
             "Large: 2/3 Screen"]
+        self.issue_pref = [
+            "Compact",
+            "Detailed"]
 
     # Adds user preferences to preferences mongoDB collection
 
     def insert_pref(self, data):
         self.pref = self.db.preferences
         self.pref.update_one({"user": data["user"]}, {
-                             "$set": {"window_size": data['window_size']}},
+                             "$set": {"window_size": data['window_size'],
+                                      "issue_compact": data['issue_compact']}},
                              upsert=True)
 
     def load_pref(self, user):

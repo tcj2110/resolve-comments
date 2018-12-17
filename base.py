@@ -10,7 +10,7 @@ from utils import authenticate  # noqa: E402
 
 # Global variable for plugin preferences
 
-preferences = {"window_size": 0.33}
+preferences = {"window_size": 0.33, "issue_compact": False}
 
 
 # Class provides the entrypoint for the plugin.
@@ -46,19 +46,31 @@ class PreferenceToggle:
 
     def __init__(self):
         self.mongo_client = mongo_connect.MongoConnect()
+        self.mongo_pref = {}
+
+    def issue_click(self, index):
+        if(index == -1):
+            return -1
+        elif(index == 0):
+            self.mongo_pref['issue_compact'] = True
+        else:
+            self.mongo_pref['issue_compact'] = False
+        self.mongo_client.insert_pref(self.mongo_pref)
+
+    def issue_pref(self):
+        sublime.active_window().show_quick_panel(
+            self.mongo_client.issue_pref, self.issue_click, 1, 2)
 
     def window_click(self, index):
         if(index == -1):
             return -1
         elif(index == 0):
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.33})
+            self.mongo_pref = {"user": self.user, "window_size": 0.33}
         elif(index == 1):
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.50})
+            self.mongo_pref = {"user": self.user, "window_size": 0.50}
         else:
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.66})
+            self.mongo_pref = {"user": self.user, "window_size": 0.66}
+        self.issue_pref()
 
     def window_preference(self, user):
         self.user = user
