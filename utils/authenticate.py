@@ -91,13 +91,28 @@ class Authenticate:
 
         return response.json()
 
+    #list all the issues, given a repository name and correct credentials
     def get_repo_issues(self, owner, repo):
         params = {
-            "state": "all",
-            "sort": "updated",
-            "direction": "desc"
+            #"state": "all",
+            #"sort": "updated",
+            #"direction": "desc"
         }
         url = git_constants.GITHUB_REPO + ("%s/%s/issues" % (owner, repo))
+        response = requests.get(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+
+    #given a specific issue, we can list all the comments
+    def get_comments_on_issue(self, owner, repo, number):
+        #url='https://api.github.com/repos/:owner/:repo/issues/:number/comments'
+        params ={
+        }
+        url = git_constants.GITHUB_REPO + ("%s/%s/issues/%s/comments" % (owner, repo, number))
         response = requests.get(
             url,
             auth=(
@@ -173,3 +188,12 @@ class Authenticate:
         return response.status_code()
 
 
+# TOKEN = 'stuy.2063'
+# USER = 'kmejia'
+# x = Authenticate(TOKEN, USER)
+# pr = x.get_repo_issues( 'RaphaelJunior', 'resolve-comments')
+# print(pr)
+#
+# pr2 = x.get_comments_on_issue( 'RaphaelJunior', 'resolve-comments' , 20)
+# print(pr2)
+# 
