@@ -163,7 +163,8 @@ def load_quick_panel_data(auth, org, repo):
             title = req['title']
             body = req['body']
             user = req['user']['login']
-            content = [title, body, user, "Pull Request"]
+            state = req['state']
+            content = [title, body, user, "Pull Request", state]
             data.append(content)
     elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
         issues = auth.get_repo_issues(org, repo)
@@ -176,7 +177,8 @@ def load_quick_panel_data(auth, org, repo):
             title = issue['title']
             body = issue['body']
             user = issue['user']['login']
-            content = [title, body, user, "Issue"]
+            state = issue['state']
+            content = [title, body, user, "Issue", state]
             data.append(content)
 
     return data
@@ -221,8 +223,13 @@ def gen_comment_html(data):
         li = "<li>" + data[i] + "</li>"
         html_arr.append(li)
     html_arr.append("</ul>")
+    link = "Click <a href='http://www.yahoo.com'>here</a> to "
+    if(data[-1] == "open"):
+        link += "close " + data[-2]
+    else:
+        link += "open " + data[-2]
     html_arr.append(
-        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
+        link)
     html_str = "".join(html_arr)
     return html_str
 

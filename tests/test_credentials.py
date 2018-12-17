@@ -83,8 +83,8 @@ class TestRepoCorrectOrgCorrect(TestCase):
     def mock_panel_list(self):
         mock_panel_list = [
             ['Set up db schema and created models', '',
-             'Raphaeljunior', 'Pull Request'],
-            ['Setup database', '', 'Raphaeljunior', 'Pull Request']]
+             'Raphaeljunior', 'Pull Request : closed'],
+            ['Setup database', '', 'Raphaeljunior', 'Pull Request: closed']]
         return mock_panel_list
 
     def test_repo_correct_org_correct(self):
