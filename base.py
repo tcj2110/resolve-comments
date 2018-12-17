@@ -4,13 +4,13 @@ import sys
 import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import mongo_connect  # noqa: E402
 from utils import authenticate  # noqa: E402
+import pref  # noqa: E402
 
 
 # Global variable for plugin preferences
 
-preferences = {"window_size": 0.33}
+preferences = {"window_size": 0.33, "issue_pr": 1}
 
 
 # Class provides the entrypoint for the plugin.
@@ -23,8 +23,6 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Entrypoint for application
 
     def run(self, edit):
-        mongo_client = mongo_connect.MongoConnect()
-        print(mongo_client)
         username_input()
 
 
@@ -39,35 +37,6 @@ class PreferencesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         preference_mode = True
         username_input(preference_mode)
-
-
-# Class that stores methods to toggle plugin preferences
-class PreferenceToggle:
-
-    def __init__(self):
-        self.mongo_client = mongo_connect.MongoConnect()
-
-    def window_click(self, index):
-        if(index == -1):
-            return -1
-        elif(index == 0):
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.33})
-        elif(index == 1):
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.50})
-        else:
-            self.mongo_client.insert_pref(
-                {"user": self.user, "window_size": 0.66})
-
-    def window_preference(self, user):
-        self.user = user
-        sublime.active_window().show_quick_panel(
-            self.mongo_client.window_pref, self.window_click, 1, 2)
-
-    def load_window_preference(self, user):
-        global preferences
-        preferences['window_size'] = self.mongo_client.load_pref(user)
 
 
 # Method opens up input window and prompts username.
@@ -128,7 +97,7 @@ def check_auth(token, user, mode):
         print(profile)
         return profile
     if(mode):
-        toggle = PreferenceToggle()
+        toggle = pref.PreferenceToggle()
         toggle.window_preference(user)
     else:
         gen_comment_list(token, user, auth)
@@ -141,7 +110,6 @@ def check_auth(token, user, mode):
 
 def extract_path():
     env_var = sublime.active_window().extract_variables()
-    # file = env_var['file']
     if('file_path' in env_var):
         path = env_var['file_path']
     else:
@@ -151,7 +119,6 @@ def extract_path():
         root = check_output(["git", "rev-parse", "--show-toplevel"], cwd=path)
         path = root.rstrip()
     os.chdir(path)
-    # Write exception case for opening file that may not exist
     with open('./.git/config') as f:
         url = f.read().splitlines()[6]
         if(url[7] == 'g'):
@@ -164,6 +131,7 @@ def extract_path():
 
 def gen_comment_list(token, user, auth):
     global data_store
+    global preferences
     path = extract_path()
     if(not path):
         error_message("Error: file not found in git repository")
@@ -171,8 +139,8 @@ def gen_comment_list(token, user, auth):
     org, repo = path
     data_store = load_quick_panel_data(
         auth, org, repo)
-    pref_toggle = PreferenceToggle()
-    pref_toggle.load_window_preference(user)
+    pref_toggle = pref.PreferenceToggle()
+    preferences = pref_toggle.load_window_preference(user)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 
@@ -183,31 +151,33 @@ def gen_comment_list(token, user, auth):
 def load_quick_panel_data(auth, org, repo):
 
     data = []
-    pull_requests = auth.get_pull_requests(org, repo)
-    if('message' in pull_requests and
-            (pull_requests['message'] == 'Bad credentials' or
-                pull_requests['message'] == 'Not Found')):
-        error_message("Error: " + pull_requests['message'])
-        return []
-    for req in pull_requests:
-        title = req['title']
-        body = req['body']
-        user = req['user']['login']
-        content = [title, body, user]
-        data.append(content)
-    '''issues = auth.get_repo_issues(org, repo)
-    print(issues)
-    if('message' in issues and
-        (issues['message'] == 'Bad credentials' or
-            issues['message'] == 'Not Found')):
-        error_message("Error: " + issues['message'])
-        return []
-    for issue in issues:
-        title = issue['title']
-        body = issue['body']
-        user = issue['user']['login']
-        content = [title, body, user]
-        data.append(content) '''
+
+    if(preferences['issue_pr'] == 1 or preferences['issue_pr'] == 2):
+        pull_requests = auth.get_pull_requests(org, repo)
+        if('message' in pull_requests and
+                (pull_requests['message'] == 'Bad credentials' or
+                    pull_requests['message'] == 'Not Found')):
+            error_message("Error: " + pull_requests['message'])
+            return []
+        for req in pull_requests:
+            title = req['title']
+            body = req['body']
+            user = req['user']['login']
+            content = [title, body, user, "Pull Request"]
+            data.append(content)
+    elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
+        issues = auth.get_repo_issues(org, repo)
+        if('message' in issues and
+            (issues['message'] == 'Bad credentials' or
+                issues['message'] == 'Not Found')):
+            error_message("Error: " + issues['message'])
+            return []
+        for issue in issues:
+            title = issue['title']
+            body = issue['body']
+            user = issue['user']['login']
+            content = [title, body, user, "Issue"]
+            data.append(content)
 
     return data
 
@@ -226,15 +196,19 @@ def on_click(index):
             [
                 0, 0, 1, 1], [
                 1, 0, 2, 1]]})
-    for numGroup in range(sublime.active_window().num_groups()):
-        if len(sublime.active_window().views_in_group(numGroup)) == 0:
-            sublime.active_window().focus_group(numGroup)
+    for nGroup in range(sublime.active_window().num_groups()):
+        if len(sublime.active_window().views_in_group(nGroup)) == 0:
+            sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().new_file()
-            createdView.erase_phantoms("test")
-            for i in range(len(data_store)):
-                createdView.add_phantom(
-                    "test", createdView.sel()[0], gen_comment_html(
-                        data_store[i]), sublime.LAYOUT_BLOCK)
+            createdView.add_phantom(
+                "test", createdView.sel()[0], gen_comment_html(
+                    data_store[index]), sublime.LAYOUT_BLOCK)
+        elif(nGroup == 1):
+            sublime.active_window().focus_group(nGroup)
+            createdView = sublime.active_window().active_view_in_group(nGroup)
+            createdView.add_phantom(
+                "test", createdView.sel()[0], gen_comment_html(
+                    data_store[index]), sublime.LAYOUT_BLOCK)
 
 
 def gen_comment_html(data):
