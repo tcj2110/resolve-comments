@@ -106,3 +106,53 @@ class Authenticate:
             params=params)
         print(response)
         return response.json()
+
+    def post_pr_comment(self ,owner, repo ,number ,body, commit_id,path,position ):
+        #url ='https://api.github.com/repos/:owner/:repo/pulls/:number/comments'
+        #note: all paramaters are required and position must be an integer
+        params = {
+            "body":body,
+            "commit_id":commit_id,
+            "path":path,
+            "position":position
+        }
+        url = git_constants.GITHUB_REPO + \
+              ("%s/%s/pulls/%s/comments" %(owner, repo, number))
+        response = requests.post(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+    def edit_pr_comment(self,owner,repo,comment_id):
+        #url=https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
+        #note: body is required
+        params = {
+            "body":body
+        }
+        url = git_constants.GITHUB_REPO + \
+              ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
+        response = requests.patch(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+    def del_pr_comment(self,owner, repo, comment_id):
+        #url ='https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
+
+        params = {}
+        url = git_constants.GITHUB_REPO + \
+              ("%s/%s/pulls/comments/%s" % (owner, repo, comment_id))
+        response = requests.delete(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        ##below should return 204
+        return response.status_code()
+
+
