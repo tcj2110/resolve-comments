@@ -1,4 +1,3 @@
-import pref
 import sublime_plugin
 import sublime
 import sys
@@ -6,6 +5,7 @@ import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import authenticate  # noqa: E402
+import pref  # noqa: E402
 
 
 # Global variable for plugin preferences

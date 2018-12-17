@@ -32,4 +32,6 @@ class MongoConnect:
     def load_pref(self, user):
         self.pref = self.db.preferences
         res = self.pref.find_one({"user": user})
+        if(res is None):
+            return {'window_size': 0.5, 'issue_pr': 1}
         return {'window_size': res['window_size'], 'issue_pr': res['issue_pr']}
