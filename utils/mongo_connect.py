@@ -12,12 +12,12 @@ class MongoConnect:
         self.client = pymongo.MongoClient(url)
         self.db = self.client['resolve-comments']
         self.window_pref = [
-            "Compact : 1/3 Screen",
-            "Normal: 1/2 Screen",
-            "Large: 2/3 Screen"]
+            "Side Window Compact : 1/3 Screen",
+            "Side Window Normal: 1/2 Screen",
+            "Side Window Large: 2/3 Screen"]
         self.issue_pref = [
-            "Compact",
-            "Detailed"]
+            "Issue Size Compact",
+            "Issue Size Detailed"]
 
     # Adds user preferences to preferences mongoDB collection
 
