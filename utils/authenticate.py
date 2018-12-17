@@ -21,7 +21,7 @@ class Authenticate:
         response = requests.get(git_constants.GITHUB_USER_URL,
                                 auth=(self.username, self.token))
         self.profile = response.json()
-        print(self.profile)
+        return self.profile
 
     def load_repos(self):
         params = {
@@ -59,14 +59,18 @@ class Authenticate:
         # list = []
         url = "https://api.github.com/repos/:" + str(owner) + "/:" + str(repo)
         url += "/pulls/:" + str(pr_id) + "/reviews"
+
         params = {}
         response = requests.get(
+
+        ''' response = requests.get(
+
             url,
             auth=(
                 self.username,
                 self.token),
             params=params)
-        return response.json()
+        return response.json() '''
 
     def get_pr_comments(self, owner, repo, pr_id):
         url = git_constants.GITHUB_REPO + \
@@ -82,6 +86,7 @@ class Authenticate:
     ##Kevin edit 12/16
 
     def get_repo_issues(self, owner, repo):
+
         ##implemented = False
 
         url = ' https://api.github.com/repos/:owner/:repo/issues'
@@ -153,4 +158,18 @@ class Authenticate:
             "comments" : comments,
         }
         response = requests.post(url, auth=(self.username, self.token), params=params)
+
+        params = {
+            "state": "all",
+            "sort": "updated",
+            "direction": "desc"
+        }
+        url = git_constants.GITHUB_REPO + ("%s/%s/issues" % (owner, repo))
+        response = requests.get(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+
         return response.json()

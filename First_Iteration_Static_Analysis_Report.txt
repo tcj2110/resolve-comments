@@ -1,0 +1,9 @@
+Static Analysis Report:
+
+Flake8...................................................................Passed
+Trim Trailing Whitespace.................................................Passed
+Fix requirements.txt.................................(no files to check)Skipped
+Pretty format JSON...................................(no files to check)Skipped
+Don't commit to branch...................................................Passed
+Detect Private Key.......................................................Passed
+Check JSON...........................................(no files to check)Skipped

@@ -1,10 +1,30 @@
 # resolve-comments
+
+Resolve-Comments is a Sublime text 3 plugin that allows users to view their Github issues and pull requests within their terminal, eliminating the need to switch between browser tabs and your editing environnment.
+
+# Setup
+
+To initialize this Sublime Text 3 Plugin on Linux  machines simply clone the repository in the following directory:
+
+        ~/.config/sublime-text-3/Packages/
+
+For Mac machines:
+        `/Users/{user}/Library/Application Support/Sublime Text 2/Packages`
+Mac Machines might also require an install of some xcode tools with the terminal line below:
+        ```xcode-select --install```
+
+The plugin must be run in the Sublime Text 3 interface within a folder that has an initialized git repository. To run the plugin simply click the view tab in the Sublime text interface and click the Show Console option. If done correctly there should be a console on the bottom of the screen. Starting the plugin requires running the following command in the console:
+
+        view.run_command("insert_panel")
+        
+On running this command you will be promped with a username and password on the bottom of the screen. Type your Github username and [personal access token](https://blog.github.com/2013-05-16-personal-api-tokens/) to run the plugin. Given that the authentication is correct the user should be presented with a panel of issues and pull requests that are searchable and selectable.
+ 
 # Environment
 
 Project uses virtualenv [https://packaging.python.org/guides/installing-using-pip-and-virtualenv/] for
 package management. 
-To get started run 
-        `python3 -m pip install virtualenv
+To get started run
+        `python3 -m pip install virtualenv`
 
 If you encounter any trouble please visit the linked virtualenv installation page. 
 To install the packages and replicate the environment, CD into the project root folder and run
@@ -33,4 +53,6 @@ coverage meets a particular standard. The goal is to ensure at any point, master
 ## Code reviews
 
 All pull requests are subject to review by another team member after they have passed the precommit checks and Continuos integration
- checks before getting merged in.
+ checks before getting merging in
+ https://travis-ci.com/Raphaeljunior/resolve-comments/builds
+ 
