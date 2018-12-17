@@ -105,6 +105,24 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
+    def post_issue_comment(self,owner, repo,number,body):
+        assert("body!=""")
+        #url ='https://api.github.com/repos/:owner/:repo/issues/:number/comments'
+        params ={
+            "body":body
+        }
+        url = git_constants.GITHUB_REPO + \
+              ("%s/%s/issues/%s/comments" %(owner, repo, number ))
+        response = requests.get(
+            url,
+            auth=(
+                self.username,
+                self.token),
+            params=params)
+        return response.json()
+
+
+
 
     def post_pr_comment(self ,owner, repo ,number ,body, commit_id,path,position ):
         #url ='https://api.github.com/repos/:owner/:repo/pulls/:number/comments'
