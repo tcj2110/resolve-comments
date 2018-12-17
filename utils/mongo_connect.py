@@ -17,7 +17,7 @@ class MongoConnect:
             "Side Window Large: 2/3 Screen"]
         self.issue_pref = [
             "Show Issues",
-            "Show Pull Requests"
+            "Show Pull Requests",
             "Show Both"]
 
     # Adds user preferences to preferences mongoDB collection
@@ -26,10 +26,10 @@ class MongoConnect:
         self.pref = self.db.preferences
         self.pref.update_one({"user": data["user"]}, {
                              "$set": {"window_size": data['window_size'],
-                                      "issue_compact": data['issue_compact']}},
+                                      "issue_pr": data['issue_pr']}},
                              upsert=True)
 
     def load_pref(self, user):
         self.pref = self.db.preferences
         res = self.pref.find_one({"user": user})
-        return res['window_size']
+        return {'window_size': res['window_size'], 'issue_pr': res['issue_pr']}

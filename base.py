@@ -1,16 +1,16 @@
+import pref
 import sublime_plugin
 import sublime
 import sys
 import os
 from subprocess import call, STDOUT, check_output
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import mongo_connect  # noqa: E402
 from utils import authenticate  # noqa: E402
 
 
 # Global variable for plugin preferences
 
-preferences = {"window_size": 0.33, "issue_compact": False}
+preferences = {"window_size": 0.33, "issue_pr": False}
 
 
 # Class provides the entrypoint for the plugin.
@@ -23,8 +23,6 @@ class InsertPanelCommand(sublime_plugin.TextCommand):
     # Entrypoint for application
 
     def run(self, edit):
-        mongo_client = mongo_connect.MongoConnect()
-        print(mongo_client)
         username_input()
 
 
@@ -39,47 +37,6 @@ class PreferencesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         preference_mode = True
         username_input(preference_mode)
-
-
-# Class that stores methods to toggle plugin preferences
-class PreferenceToggle:
-
-    def __init__(self):
-        self.mongo_client = mongo_connect.MongoConnect()
-        self.mongo_pref = {}
-
-    def issue_click(self, index):
-        if(index == -1):
-            return -1
-        elif(index == 0):
-            self.mongo_pref['issue_compact'] = True
-        else:
-            self.mongo_pref['issue_compact'] = False
-        self.mongo_client.insert_pref(self.mongo_pref)
-
-    def issue_pref(self):
-        sublime.active_window().show_quick_panel(
-            self.mongo_client.issue_pref, self.issue_click, 1, 2)
-
-    def window_click(self, index):
-        if(index == -1):
-            return -1
-        elif(index == 0):
-            self.mongo_pref = {"user": self.user, "window_size": 0.33}
-        elif(index == 1):
-            self.mongo_pref = {"user": self.user, "window_size": 0.50}
-        else:
-            self.mongo_pref = {"user": self.user, "window_size": 0.66}
-        self.issue_pref()
-
-    def window_preference(self, user):
-        self.user = user
-        sublime.active_window().show_quick_panel(
-            self.mongo_client.window_pref, self.window_click, 1, 2)
-
-    def load_window_preference(self, user):
-        global preferences
-        preferences['window_size'] = self.mongo_client.load_pref(user)
 
 
 # Method opens up input window and prompts username.
@@ -140,7 +97,7 @@ def check_auth(token, user, mode):
         print(profile)
         return profile
     if(mode):
-        toggle = PreferenceToggle()
+        toggle = pref.PreferenceToggle()
         toggle.window_preference(user)
     else:
         gen_comment_list(token, user, auth)
@@ -153,7 +110,6 @@ def check_auth(token, user, mode):
 
 def extract_path():
     env_var = sublime.active_window().extract_variables()
-    # file = env_var['file']
     if('file_path' in env_var):
         path = env_var['file_path']
     else:
@@ -163,7 +119,6 @@ def extract_path():
         root = check_output(["git", "rev-parse", "--show-toplevel"], cwd=path)
         path = root.rstrip()
     os.chdir(path)
-    # Write exception case for opening file that may not exist
     with open('./.git/config') as f:
         url = f.read().splitlines()[6]
         if(url[7] == 'g'):
@@ -176,6 +131,7 @@ def extract_path():
 
 def gen_comment_list(token, user, auth):
     global data_store
+    global preferences
     path = extract_path()
     if(not path):
         error_message("Error: file not found in git repository")
@@ -183,8 +139,8 @@ def gen_comment_list(token, user, auth):
     org, repo = path
     data_store = load_quick_panel_data(
         auth, org, repo)
-    pref_toggle = PreferenceToggle()
-    pref_toggle.load_window_preference(user)
+    pref_toggle = pref.PreferenceToggle()
+    preferences = pref_toggle.load_window_preference(user)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
 
 
@@ -239,16 +195,9 @@ def on_click(index):
                 0, 0, 1, 1], [
                 1, 0, 2, 1]]})
     for nGroup in range(sublime.active_window().num_groups()):
-        print(nGroup)
         if len(sublime.active_window().views_in_group(nGroup)) == 0:
-            print(nGroup)
             sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().new_file()
-            # createdView.erase_phantoms("test")
-            '''for i in range(len(data_store)):
-                createdView.add_phantom(
-                    "test", createdView.sel()[0], gen_comment_html(
-                        data_store[i]), sublime.LAYOUT_BLOCK)'''
             createdView.add_phantom(
                 "test", createdView.sel()[0], gen_comment_html(
                     data_store[index]), sublime.LAYOUT_BLOCK)
@@ -266,13 +215,12 @@ def gen_comment_html(data):
         : column; flex-wrap: wrap;} </style>",
         "<ul>"]
     html_arr.append("<h3>" + data[0] + "</h3>")
-    if(not preferences['issue_compact']):
-        for i in range(1, len(data)):
-            li = "<li>" + data[i] + "</li>"
-            html_arr.append(li)
-        html_arr.append("</ul>")
-        html_arr.append(
-            "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
+    for i in range(1, len(data)):
+        li = "<li>" + data[i] + "</li>"
+        html_arr.append(li)
+    html_arr.append("</ul>")
+    html_arr.append(
+        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
     html_str = "".join(html_arr)
     return html_str
 
