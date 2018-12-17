@@ -53,13 +53,17 @@ class PreferenceToggle:
         if(index == -1):
             return -1
         elif(index == 0):
-            self.mongo_client
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.33})
         elif(index == 1):
-            print("0.50")
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.50})
         else:
-            print("0.66")
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.66})
 
     def window_preference(self, user):
+        self.user = user
         sublime.active_window().show_quick_panel(
             self.mongo_client.window_pref, self.window_click, 1, 2)
 
@@ -109,6 +113,25 @@ def token_input(user, mode):
         on_change=on_change,
         on_cancel=on_cancel)
 
+
+def check_auth(token, user, mode):
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return "Error: Username or Token Left Blank"
+    auth = authenticate.Authenticate(token, user)
+    profile = auth.get_profile()
+    if('message' in profile):
+        error_message("Error: Bad Credentials")
+        print(profile)
+        return profile
+    if(mode):
+        toggle = PreferenceToggle()
+        toggle.window_preference(user)
+    else:
+        gen_comment_list(token, user, auth)
+    return True
+
+
 #  Manager function that uses helper functions to show
 #  comments in side popup
 
@@ -134,24 +157,6 @@ def extract_path():
             github_path = url[26:-4]
     org, repo = github_path.split('/')
     return (org, repo)
-
-
-def check_auth(token, user, mode):
-    if(user == "" or token == ""):
-        error_message("Error: Username or Token Left Blank")
-        return "Error: Username or Token Left Blank"
-    auth = authenticate.Authenticate(token, user)
-    profile = auth.get_profile()
-    if('message' in profile):
-        error_message("Error: Bad Credentials")
-        print(profile)
-        return profile
-    if(mode):
-        toggle = PreferenceToggle()
-        toggle.window_preference(user)
-    else:
-        gen_comment_list(token, user, auth)
-    return True
 
 
 def gen_comment_list(token, user, auth):
@@ -225,19 +230,21 @@ def load_quick_panel_data(auth, org, repo):
         user = req['user']['login']
         content = [title, body, user]
         data.append(content)
-#    issues = auth.get_repo_issues(org, repo)
-#    if('message' in issues and
-#        (issues['message'] == 'Bad credentials' or
-#            issues['message'] == 'Not Found')):
-#        error_message("Error: " + issues['message'])
-#        return []
-#    for issue in issues:
-#        title = issue['title']
-#        body = issue['body']
-#        user = issue['user']['login']
-#        content = [title, body, user]
-#        data.append(content)
+    '''issues = auth.get_repo_issues(org, repo)
+    print(issues)
+    if('message' in issues and
+        (issues['message'] == 'Bad credentials' or
+            issues['message'] == 'Not Found')):
+        error_message("Error: " + issues['message'])
+        return []
+    for issue in issues:
+        title = issue['title']
+        body = issue['body']
+        user = issue['user']['login']
+        content = [title, body, user]
+        data.append(content) '''
     return data
+
 
 def error_message(e_mes):
     sublime.active_window().show_input_panel(
