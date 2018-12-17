@@ -178,7 +178,7 @@ def load_quick_panel_data(auth, org, repo):
                 str(iden)]
             data.append(content
                         )
-    elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
+    if(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
         issues = auth.get_repo_issues(org, repo)
         if('message' in issues and
             (issues['message'] == 'Bad credentials' or
@@ -213,32 +213,71 @@ def on_click(index, auth, org, repo):
                 0, 0, 1, 1], [
                 1, 0, 2, 1]]})
     data = data_store[index]
-    # comment_data = auth.get_pr_comments(org,repo, int(data[-1]))
-    # print(comment_data)
+    num = int(data[-1])
+    c_json = auth.get_comments_on_issue(org, repo, num)
     for nGroup in range(sublime.active_window().num_groups()):
         if len(sublime.active_window().views_in_group(nGroup)) == 0:
             sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().new_file()
+            if(data[-4] == "Pull Request"):
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_issue_html(
+                        data, True), sublime.LAYOUT_BLOCK,
+                    lambda href: sublime.run_command(
+                        'open_url', {'url': href}))
+            else:
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_issue_html(
+                        data, False), sublime.LAYOUT_BLOCK,
+                    lambda href: on_phantom_click(
+                        href, auth, org, repo, num))
             createdView.add_phantom(
-                "test", createdView.sel()[0], gen_comment_html(
-                    data), sublime.LAYOUT_BLOCK,
-                lambda href: sublime.run_command(
-                    'open_url', {'url': href}))
+                "test",
+                createdView.sel()[0],
+                gen_comment_html(c_json),
+                sublime.LAYOUT_BLOCK)
         elif(nGroup == 1):
             sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().active_view_in_group(nGroup)
+            if(data[-4] == "Pull Request"):
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_issue_html(
+                        data, True), sublime.LAYOUT_BLOCK,
+                    lambda href: sublime.run_command(
+                        'open_url', {'url': href}))
+            else:
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_issue_html(
+                        data, False), sublime.LAYOUT_BLOCK,
+                    lambda href: on_phantom_click(
+                        href, auth, org, repo, num))
             createdView.add_phantom(
-                "test", createdView.sel()[0], gen_comment_html(
-                    data), sublime.LAYOUT_BLOCK,
-                lambda href: sublime.run_command(
-                    'open_url', {'url': href}))
+                "test",
+                createdView.sel()[0],
+                gen_comment_html(c_json),
+                sublime.LAYOUT_BLOCK)
 
 
-def on_phantom_click(href):
-    print("DID WE REACH IT")
+def on_phantom_click(href, auth, org, repo, num):
+    def on_done(body):
+        res = auth.post_issue_comment(org, repo, num, body)
+        print(res)
+
+    def on_change(body):
+        pass
+
+    def on_cancel(body):
+        print("User cancelled input")
+
+    sublime.active_window().show_input_panel(
+        caption="Issue Details",
+        initial_text="",
+        on_done=on_done,
+        on_change=on_change,
+        on_cancel=on_cancel)
 
 
-def gen_comment_html(data):
+def gen_issue_html(data, pr):
     html_arr = [
         "<style> ul { display: flex; flex-direction \
         : column; flex-wrap: wrap;} </style>",
@@ -247,10 +286,33 @@ def gen_comment_html(data):
     for i in range(1, len(data) - 1):
         li = "<li>" + data[i] + "</li>"
         html_arr.append(li)
-    link = "Click <a href='" + data[-2] + \
-        "'>here</a> to go to Pull Request Link "
+
+    if(pr):
+        link = "Click <a href='" + data[-2] + \
+            "'>here</a> to go to Pull Request Link "
+    else:
+        link = "Click <a href='" + data[-2] + \
+            "'>here</a> to add new issue comment"
     html_arr.append(
         "<li>" + link + "</li>")
+    html_arr.append("</ul>")
+
+    html_str = "".join(html_arr)
+    return html_str
+
+
+def gen_comment_html(json):
+    data = []
+    for req in json:
+        data.append(req['body'])
+    html_arr = [
+        "<style> ul { display: flex; flex-direction \
+        : column; flex-wrap: wrap;} </style>",
+        "<ul>"]
+    html_arr.append("<h4>Comments:</h4>")
+    for i in range(0, len(data)):
+        li = "<li>" + data[i] + "</li>"
+        html_arr.append(li)
     html_arr.append("</ul>")
 
     html_str = "".join(html_arr)

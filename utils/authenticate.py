@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests  # noqa: E402
 import constants as git_constants  # noqa: E402
@@ -121,18 +122,16 @@ class Authenticate:
         return response.json()
 
     def post_issue_comment(self, owner, repo, number, body):
-        assert("body!=""")
-        params = {
-            "body": body
-        }
+        body = body.replace('\n', '\\n')
+        params = {"body": body}
+        ses = requests.Session()
+        ses.auth = (self.username, self.token)
+
         url = git_constants.GITHUB_REPO + \
             ("%s/%s/issues/%s/comments" % (owner, repo, number))
-        response = requests.get(
+        response = ses.post(
             url,
-            auth=(
-                self.username,
-                self.token),
-            params=params)
+            json.dumps(params))
         return response.json()
 
     def post_pr_comment(
