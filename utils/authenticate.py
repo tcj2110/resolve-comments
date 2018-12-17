@@ -69,7 +69,7 @@ class Authenticate:
             auth=(
                 self.username,
                 self.token),
-            params=params) )
+            params=params) 
         return response.json()
 
     def get_pr_comments(self, owner, repo, pr_id):
@@ -79,7 +79,7 @@ class Authenticate:
             "sort": "created",
             "direction": "desc"
         }
-        print(url)
+        #print(url)
         response = requests.get(url, auth=(self.username, self.token), params=params)
         return response.json()
 
