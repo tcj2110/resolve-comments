@@ -124,7 +124,7 @@ class Authenticate:
                 self.token),
             params=params)
         return response.json()
-    def edit_pr_comment(self,owner,repo,comment_id):
+    def edit_pr_comment(self,owner,repo,comment_id, body):
         #url=https://api.github.com/repos/:owner/:repo/pulls/comments/:comment_id
         #note: body is required
         params = {
