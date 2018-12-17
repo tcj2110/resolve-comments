@@ -104,4 +104,5 @@ class Authenticate:
                 self.username,
                 self.token),
             params=params)
+        print(response)
         return response.json()

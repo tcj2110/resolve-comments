@@ -10,7 +10,7 @@ from utils import authenticate  # noqa: E402
 
 # Global variable for plugin preferences
 
-preferences = {"window": 0.5}
+preferences = {"window_size": 0.33}
 
 
 # Class provides the entrypoint for the plugin.
@@ -39,8 +39,6 @@ class PreferencesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         preference_mode = True
         username_input(preference_mode)
-        # self.window_preference()
-        # print(self.mongo_client)
 
 
 # Class that stores methods to toggle plugin preferences
@@ -53,15 +51,24 @@ class PreferenceToggle:
         if(index == -1):
             return -1
         elif(index == 0):
-            print("0.33")
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.33})
         elif(index == 1):
-            print("0.50")
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.50})
         else:
-            print("0.66")
+            self.mongo_client.insert_pref(
+                {"user": self.user, "window_size": 0.66})
 
     def window_preference(self, user):
+        self.user = user
         sublime.active_window().show_quick_panel(
             self.mongo_client.window_pref, self.window_click, 1, 2)
+
+    def load_window_preference(self, user):
+        global preferences
+        preferences['window_size'] = self.mongo_client.load_pref(user)
+
 
 # Method opens up input window and prompts username.
 # When user presses enter on_done function calls
@@ -109,6 +116,25 @@ def token_input(user, mode):
         on_change=on_change,
         on_cancel=on_cancel)
 
+
+def check_auth(token, user, mode):
+    if(user == "" or token == ""):
+        error_message("Error: Username or Token Left Blank")
+        return "Error: Username or Token Left Blank"
+    auth = authenticate.Authenticate(token, user)
+    profile = auth.get_profile()
+    if('message' in profile):
+        error_message("Error: Bad Credentials")
+        print(profile)
+        return profile
+    if(mode):
+        toggle = PreferenceToggle()
+        toggle.window_preference(user)
+    else:
+        gen_comment_list(token, user, auth)
+    return True
+
+
 #  Manager function that uses helper functions to show
 #  comments in side popup
 
@@ -136,24 +162,6 @@ def extract_path():
     return (org, repo)
 
 
-def check_auth(token, user, mode):
-    if(user == "" or token == ""):
-        error_message("Error: Username or Token Left Blank")
-        return "Error: Username or Token Left Blank"
-    auth = authenticate.Authenticate(token, user)
-    profile = auth.get_profile()
-    if('message' in profile):
-        error_message("Error: Bad Credentials")
-        print(profile)
-        return profile
-    if(mode):
-        toggle = PreferenceToggle()
-        toggle.window_preference(user)
-    else:
-        gen_comment_list(token, user, auth)
-    return True
-
-
 def gen_comment_list(token, user, auth):
     global data_store
     path = extract_path()
@@ -163,47 +171,9 @@ def gen_comment_list(token, user, auth):
     org, repo = path
     data_store = load_quick_panel_data(
         auth, org, repo)
+    pref_toggle = PreferenceToggle()
+    pref_toggle.load_window_preference(user)
     sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
-
-# Method that responds to clicking quickpanel item
-
-
-def gen_comment_html(data):
-    html_arr = [
-        "<style> ul { display: flex; flex-direction \
-        : column; flex-wrap: wrap;} </style>",
-        "<ul>"]
-    html_arr.append("<h3>" + data[0] + "</h3>")
-    for i in range(1, len(data)):
-        li = "<li>" + data[i] + "</li>"
-        html_arr.append(li)
-    html_arr.append("</ul>")
-    html_arr.append(
-        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
-    html_str = "".join(html_arr)
-    return html_str
-
-
-def on_click(index):
-    if(index == -1):
-        return -1
-
-    sublime.active_window().set_layout({
-        "cols": [
-            0.0, 0.40, 1.0], "rows": [
-            0.0, 1.0], "cells": [
-            [
-                0, 0, 1, 1], [
-                1, 0, 2, 1]]})
-    for numGroup in range(sublime.active_window().num_groups()):
-        if len(sublime.active_window().views_in_group(numGroup)) == 0:
-            sublime.active_window().focus_group(numGroup)
-            createdView = sublime.active_window().new_file()
-            createdView.erase_phantoms("test")
-            for i in range(len(data_store)):
-                createdView.add_phantom(
-                    "test", createdView.sel()[0], gen_comment_html(
-                        data_store[i]), sublime.LAYOUT_BLOCK)
 
 
 # Method loads Github pull_requests data by authenticating the user and token.
@@ -225,19 +195,63 @@ def load_quick_panel_data(auth, org, repo):
         user = req['user']['login']
         content = [title, body, user]
         data.append(content)
-#    issues = auth.get_repo_issues(org, repo)
-#    if('message' in issues and
-#        (issues['message'] == 'Bad credentials' or
-#            issues['message'] == 'Not Found')):
-#        error_message("Error: " + issues['message'])
-#        return []
-#    for issue in issues:
-#        title = issue['title']
-#        body = issue['body']
-#        user = issue['user']['login']
-#        content = [title, body, user]
-#        data.append(content)
+    '''issues = auth.get_repo_issues(org, repo)
+    print(issues)
+    if('message' in issues and
+        (issues['message'] == 'Bad credentials' or
+            issues['message'] == 'Not Found')):
+        error_message("Error: " + issues['message'])
+        return []
+    for issue in issues:
+        title = issue['title']
+        body = issue['body']
+        user = issue['user']['login']
+        content = [title, body, user]
+        data.append(content) '''
+
     return data
+
+
+# Method that responds to clicking quickpanel item
+
+
+def on_click(index):
+    if(index == -1):
+        return -1
+
+    sublime.active_window().set_layout({
+        "cols": [
+            0.0, preferences['window_size'], 1.0], "rows": [
+            0.0, 1.0], "cells": [
+            [
+                0, 0, 1, 1], [
+                1, 0, 2, 1]]})
+    for numGroup in range(sublime.active_window().num_groups()):
+        if len(sublime.active_window().views_in_group(numGroup)) == 0:
+            sublime.active_window().focus_group(numGroup)
+            createdView = sublime.active_window().new_file()
+            createdView.erase_phantoms("test")
+            for i in range(len(data_store)):
+                createdView.add_phantom(
+                    "test", createdView.sel()[0], gen_comment_html(
+                        data_store[i]), sublime.LAYOUT_BLOCK)
+
+
+def gen_comment_html(data):
+    html_arr = [
+        "<style> ul { display: flex; flex-direction \
+        : column; flex-wrap: wrap;} </style>",
+        "<ul>"]
+    html_arr.append("<h3>" + data[0] + "</h3>")
+    for i in range(1, len(data)):
+        li = "<li>" + data[i] + "</li>"
+        html_arr.append(li)
+    html_arr.append("</ul>")
+    html_arr.append(
+        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
+    html_str = "".join(html_arr)
+    return html_str
+
 
 def error_message(e_mes):
     sublime.active_window().show_input_panel(
