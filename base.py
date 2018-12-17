@@ -141,7 +141,7 @@ def gen_comment_list(token, user, auth):
         auth, org, repo)
     pref_toggle = pref.PreferenceToggle()
     preferences = pref_toggle.load_window_preference(user)
-    sublime.active_window().show_quick_panel(data_store, on_click, 1, 2)
+    sublime.active_window().show_quick_panel(data_store[:-1], on_click, 1, 2)
 
 
 # Method loads Github pull_requests data by authenticating the user and token.
@@ -164,7 +164,8 @@ def load_quick_panel_data(auth, org, repo):
             body = req['body']
             user = req['user']['login']
             state = req['state']
-            content = [title, body, user, "Pull Request", state]
+            url = req['html_url']
+            content = [title, body, user, "Pull Request", state, url]
             data.append(content)
     elif(preferences['issue_pr'] == 0 or preferences['issue_pr'] == 2):
         issues = auth.get_repo_issues(org, repo)
@@ -178,7 +179,8 @@ def load_quick_panel_data(auth, org, repo):
             body = issue['body']
             user = issue['user']['login']
             state = issue['state']
-            content = [title, body, user, "Issue", state]
+            url = issue['html_url']
+            content = [title, body, user, "Issue", state, url]
             data.append(content)
 
     return data
@@ -204,13 +206,21 @@ def on_click(index):
             createdView = sublime.active_window().new_file()
             createdView.add_phantom(
                 "test", createdView.sel()[0], gen_comment_html(
-                    data_store[index]), sublime.LAYOUT_BLOCK)
+                    data_store[index]), sublime.LAYOUT_BLOCK,
+                lambda href: sublime.run_command(
+                    'open_url', {'url': href}))
         elif(nGroup == 1):
             sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().active_view_in_group(nGroup)
             createdView.add_phantom(
                 "test", createdView.sel()[0], gen_comment_html(
-                    data_store[index]), sublime.LAYOUT_BLOCK)
+                    data_store[index]), sublime.LAYOUT_BLOCK,
+                lambda href: sublime.run_command(
+                    'open_url', {'url': href}))
+
+
+def on_phantom_click(href):
+    print("DID WE REACH IT")
 
 
 def gen_comment_html(data):
@@ -219,17 +229,15 @@ def gen_comment_html(data):
         : column; flex-wrap: wrap;} </style>",
         "<ul>"]
     html_arr.append("<h3>" + data[0] + "</h3>")
-    for i in range(1, len(data)):
+    for i in range(1, len(data) - 1):
         li = "<li>" + data[i] + "</li>"
         html_arr.append(li)
-    html_arr.append("</ul>")
-    link = "Click <a href='http://www.yahoo.com'>here</a> to "
-    if(data[-1] == "open"):
-        link += "close " + data[-2]
-    else:
-        link += "open " + data[-2]
+    link = "Click <a href='" + data[-1] + \
+        "'>here</a> to go to Pull Request Link "
     html_arr.append(
-        link)
+        "<li>" + link + "</li>")
+    html_arr.append("</ul>")
+
     html_str = "".join(html_arr)
     return html_str
 
