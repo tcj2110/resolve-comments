@@ -16,8 +16,9 @@ class MongoConnect:
             "Side Window Normal: 1/2 Screen",
             "Side Window Large: 2/3 Screen"]
         self.issue_pref = [
-            "Issue Size Compact",
-            "Issue Size Detailed"]
+            "Show Issues",
+            "Show Pull Requests"
+            "Show Both"]
 
     # Adds user preferences to preferences mongoDB collection
 

@@ -238,15 +238,26 @@ def on_click(index):
             [
                 0, 0, 1, 1], [
                 1, 0, 2, 1]]})
-    for numGroup in range(sublime.active_window().num_groups()):
-        if len(sublime.active_window().views_in_group(numGroup)) == 0:
-            sublime.active_window().focus_group(numGroup)
+    for nGroup in range(sublime.active_window().num_groups()):
+        print(nGroup)
+        if len(sublime.active_window().views_in_group(nGroup)) == 0:
+            print(nGroup)
+            sublime.active_window().focus_group(nGroup)
             createdView = sublime.active_window().new_file()
-            createdView.erase_phantoms("test")
-            for i in range(len(data_store)):
+            # createdView.erase_phantoms("test")
+            '''for i in range(len(data_store)):
                 createdView.add_phantom(
                     "test", createdView.sel()[0], gen_comment_html(
-                        data_store[i]), sublime.LAYOUT_BLOCK)
+                        data_store[i]), sublime.LAYOUT_BLOCK)'''
+            createdView.add_phantom(
+                "test", createdView.sel()[0], gen_comment_html(
+                    data_store[index]), sublime.LAYOUT_BLOCK)
+        elif(nGroup == 1):
+            sublime.active_window().focus_group(nGroup)
+            createdView = sublime.active_window().active_view_in_group(nGroup)
+            createdView.add_phantom(
+                "test", createdView.sel()[0], gen_comment_html(
+                    data_store[index]), sublime.LAYOUT_BLOCK)
 
 
 def gen_comment_html(data):
@@ -255,12 +266,13 @@ def gen_comment_html(data):
         : column; flex-wrap: wrap;} </style>",
         "<ul>"]
     html_arr.append("<h3>" + data[0] + "</h3>")
-    for i in range(1, len(data)):
-        li = "<li>" + data[i] + "</li>"
-        html_arr.append(li)
-    html_arr.append("</ul>")
-    html_arr.append(
-        "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
+    if(not preferences['issue_compact']):
+        for i in range(1, len(data)):
+            li = "<li>" + data[i] + "</li>"
+            html_arr.append(li)
+        html_arr.append("</ul>")
+        html_arr.append(
+            "Click <a href='http://www.yahoo.com'>here</a> to go to yahoo.")
     html_str = "".join(html_arr)
     return html_str
 
